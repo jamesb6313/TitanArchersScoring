@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <fragment
-        android:id="@+id/fragmentTop"
+        android:id="@+id/fragmentTarget"
         android:name="com.titanarchers.FragmentTarget"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -48,6 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="122dp" />
+        app:layout_constraintGuide_begin="135dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,22 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-    
-            <TextView
-                android:id="@+id/fragmentRightTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/score_border"
-                android:gravity="center"
-                android:textColor="@android:color/holo_red_light"
-                android:textSize="24sp" />
-        </LinearLayout> -->
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -104,7 +88,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/fragmentRightSubtotalLine1"
+                    android:id="@+id/fragmentScoreSubtotalLine1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -195,7 +179,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/fragmentRightSubtotalLine2"
+                    android:id="@+id/fragmentScoreSubtotalLine2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -286,7 +270,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/fragmentRightSubtotalLine3"
+                    android:id="@+id/fragmentScoreSubtotalLine3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -377,7 +361,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/fragmentRightSubtotalLine4"
+                    android:id="@+id/fragmentScoreSubtotalLine4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -468,7 +452,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/fragmentRightSubtotalLine5"
+                    android:id="@+id/fragmentScoreSubtotalLine5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

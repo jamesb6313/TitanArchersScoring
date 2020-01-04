@@ -2,6 +2,7 @@ package com.titanarchers;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +16,15 @@ import androidx.lifecycle.ViewModelProviders;
 import java.util.List;
 
 public class FragmentScores extends Fragment {
-    private ArrowPointViewModel model;
 
     private TextView tvRow1, tvRow2, tvRow3, tvRow4, tvRow5;
     private TextView[] mTvScores = new TextView[30];
-    private String[] id;
 
     @Override
     public void onCreate(@Nullable Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
 
+        ArrowPointViewModel model;
         model = ViewModelProviders.of(this.getActivity()).get(ArrowPointViewModel.class);
 
         model.getArrowPoints().observe(this, new Observer<List<ArrowPoint>>() {
@@ -46,8 +46,9 @@ public class FragmentScores extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_scores, container);
+        String[] id;
 
-        if(retView!=null) {
+        if(retView != null) {
 
             int temp;
             id = new String[]{
@@ -59,15 +60,24 @@ public class FragmentScores extends Fragment {
             };
 
             for (int i = 0; i < id.length; i++) {
-                temp = getResources().getIdentifier(id[i],"id",getActivity().getPackageName());
-                mTvScores[i] = (TextView) retView.findViewById(temp);
+
+                //TODO; use Objects.requireNonNull() but need API 19 or greater - currently API17
+                String PACKAGE_NAME = getActivity().getPackageName();
+
+                if (PACKAGE_NAME != null) {
+                    temp = getResources().getIdentifier(id[i], "id", PACKAGE_NAME);
+                    mTvScores[i] = retView.findViewById(temp);
+                } else {
+                    Log.d("MyINFO", "Error getting current score TextView in FragmentScores.java");
+                }
+
             }
 
-            tvRow1 = (TextView) retView.findViewById(R.id.fragmentRightSubtotalLine1);
-            tvRow2 = (TextView) retView.findViewById(R.id.fragmentRightSubtotalLine2);
-            tvRow3 = (TextView) retView.findViewById(R.id.fragmentRightSubtotalLine3);
-            tvRow4 = (TextView) retView.findViewById(R.id.fragmentRightSubtotalLine4);
-            tvRow5 = (TextView) retView.findViewById(R.id.fragmentRightSubtotalLine5);
+            tvRow1 = retView.findViewById(R.id.fragmentScoreSubtotalLine1);
+            tvRow2 = retView.findViewById(R.id.fragmentScoreSubtotalLine2);
+            tvRow3 = retView.findViewById(R.id.fragmentScoreSubtotalLine3);
+            tvRow4 = retView.findViewById(R.id.fragmentScoreSubtotalLine4);
+            tvRow5 = retView.findViewById(R.id.fragmentScoreSubtotalLine5);
         }
         return retView;
     }
@@ -92,7 +102,7 @@ public class FragmentScores extends Fragment {
 
     private void calcSubtotal(List<ArrowPoint> l) {
         int subtotal = 0;
-        int row = (int) l.size() / 6;
+        int row = l.size() / 6;
         ArrowPoint ap;
 
 

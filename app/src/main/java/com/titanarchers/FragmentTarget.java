@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 public class FragmentTarget extends Fragment {
-    private TargetView targetView;
     private ArrowPointViewModel model;
 
     @Override
@@ -27,8 +26,9 @@ public class FragmentTarget extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_target, container);
 
+        TargetView targetView;
         if(retView!=null) {
-            targetView = (TargetView) retView.findViewById(R.id.targetView);
+            targetView = retView.findViewById(R.id.targetView);
 
             DisplayMetrics metrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);

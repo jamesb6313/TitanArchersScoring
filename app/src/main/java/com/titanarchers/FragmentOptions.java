@@ -38,7 +38,7 @@ public class FragmentOptions extends Fragment {
         if(retView!=null)
         {
             // Click this button will show the text in right fragment.
-            Button androidButton = (Button)retView.findViewById(R.id.fOptionAndroid);
+            Button androidButton = retView.findViewById(R.id.fOptionAndroid);
             androidButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -66,7 +66,7 @@ public class FragmentOptions extends Fragment {
 
 
             // Click this button will show a Toast popup.
-            Button iosButton = (Button)retView.findViewById(R.id.fOptionIos);
+            Button iosButton = retView.findViewById(R.id.fOptionIos);
             iosButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -77,7 +77,7 @@ public class FragmentOptions extends Fragment {
 
 
             // Click this button will show an alert dialog.
-            Button windowsButton = (Button)retView.findViewById(R.id.fOptionWindows);
+            Button windowsButton = retView.findViewById(R.id.fOptionWindows);
             windowsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

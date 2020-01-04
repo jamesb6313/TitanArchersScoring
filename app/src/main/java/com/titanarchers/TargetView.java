@@ -171,6 +171,7 @@ public class TargetView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 touchUp();
+                //performClick();
                 invalidate();
                 break;
         }
