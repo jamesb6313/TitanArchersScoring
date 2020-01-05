@@ -31,11 +31,8 @@ public class FragmentScores extends Fragment {
             @Override
             public void onChanged(List<ArrowPoint> item) {
                 displayScores(item);
-
-                if ((item.size() > 0) && (item.size() % 6 == 0)) {
-                    calcSubtotal(item);
-                }
-
+                int currentTotal = calcSubtotal(item);
+                getActivity().setTitle("Titan Archers Scoring: Score = " + currentTotal);
             }
         });
 
@@ -100,56 +97,51 @@ public class FragmentScores extends Fragment {
         }
     }
 
-    private void calcSubtotal(List<ArrowPoint> l) {
+    private int calcSubtotal(List<ArrowPoint> l) {
         int subtotal = 0;
-        int row = l.size() / 6;
+        int total = 0;
         ArrowPoint ap;
 
+        for (int i = 0; i < l.size(); i++) {
+            ap = l.get(i);
+            subtotal += (ap.score == 11) ? 10 : ap.score;
+            total += (ap.score == 11) ? 10 : ap.score;
 
-        //TODO: need to calc all current row titles
-        switch (row) {
-            case 1:
-                for (int i = 0; i < l.size(); i++) {
-                    ap = l.get(i);
-                    subtotal += (ap.score == 11) ? 10: ap.score;
-                }
+            if (i < 6) {
                 tvRow1.setTextColor(Color.RED);
                 tvRow1.setText(String.valueOf(subtotal));
-                break;
-            case 2:
-                for (int i = 6; i < l.size(); i++) {
-                    ap = l.get(i);
-                    subtotal += (ap.score == 11) ? 10: ap.score;
+                if ((i + 1) % 6 == 0) {
+                    subtotal = 0;
                 }
+            } else if (i < 12) {
                 tvRow2.setTextColor(Color.RED);
                 tvRow2.setText(String.valueOf(subtotal));
-                break;
-            case 3:
-                for (int i = 12; i < l.size(); i++) {
-                    ap = l.get(i);
-                    subtotal += (ap.score == 11) ? 10: ap.score;
+                if ((i + 1) % 6 == 0) {
+                    subtotal = 0;
                 }
+            } else if (i < 18) {
                 tvRow3.setTextColor(Color.RED);
                 tvRow3.setText(String.valueOf(subtotal));
-                break;
-            case 4:
-                for (int i = 18; i < l.size(); i++) {
-                    ap = l.get(i);
-                    subtotal += (ap.score == 11) ? 10: ap.score;
+                if ((i + 1) % 6 == 0) {
+                    subtotal = 0;
                 }
+            } else if (i < 24) {
                 tvRow4.setTextColor(Color.RED);
                 tvRow4.setText(String.valueOf(subtotal));
-                break;
-            case 5:
-                for (int i = 24; i < l.size(); i++) {
-                    ap = l.get(i);
-                    subtotal += (ap.score == 11) ? 10: ap.score;
+                if ((i + 1) % 6 == 0) {
+                    subtotal = 0;
                 }
+            } else if (i < 30) {
                 tvRow5.setTextColor(Color.RED);
                 tvRow5.setText(String.valueOf(subtotal));
-                break;
+                if ((i + 1) % 6 == 0) {
+                    subtotal = 0;
+                }
+            }
+
         }
 
+        return total;
     }
 
 }
