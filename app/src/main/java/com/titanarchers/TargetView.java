@@ -151,6 +151,8 @@ public class TargetView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        super.onTouchEvent(event);
+
         float x = event.getX();
         float y = event.getY();
 
@@ -170,8 +172,8 @@ public class TargetView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touchUp();
-                //performClick();
+                //touchUp();
+                performClick();
                 invalidate();
                 break;
         }
@@ -190,6 +192,7 @@ public class TargetView extends View {
 
     }
 
+    /*
     private void touchUp() {
         int score;
         score = getScore(mX, mY - TOUCH_OFFSET);
@@ -198,6 +201,21 @@ public class TargetView extends View {
             mCoordinatesListener.onUpdate(score, currentColor, mX, mY - TOUCH_OFFSET);
         }
 
+    }
+     */
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+
+        int score;
+        score = getScore(mX, mY - TOUCH_OFFSET);
+
+        if (mCoordinatesListener != null) {
+            mCoordinatesListener.onUpdate(score, currentColor, mX, mY - TOUCH_OFFSET);
+        }
+
+        return true;
     }
 
     private void touchStart(float x, float y) {

@@ -24,7 +24,7 @@
         android:id="@+id/fOptionWindows"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Windows"
+        android:text="Show Card"
         android:textAllCaps="false"
         android:textSize="20dp" />
 

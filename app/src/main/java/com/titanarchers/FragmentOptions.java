@@ -1,5 +1,6 @@
 package com.titanarchers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 public class FragmentOptions extends Fragment {
@@ -77,13 +79,28 @@ public class FragmentOptions extends Fragment {
 
 
             // Click this button will show an alert dialog.
-            Button windowsButton = retView.findViewById(R.id.fOptionWindows);
+            final Button windowsButton = retView.findViewById(R.id.fOptionWindows);
             windowsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(fragmentBelongActivity).create();
+                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                    FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
+
+                    // Get scores Fragment object.
+                    Fragment scorecard = fragmentManager.findFragmentById(R.id.fragmentScoreCard);
+
+                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+                    if (scorecard.isHidden()) {
+                        ft.show(scorecard);
+                        windowsButton.setText("Hide Card");
+                    } else {
+                        ft.hide(scorecard);
+                        windowsButton.setText("Show Card");
+                    }
+                    ft.commit();
+/*                    AlertDialog alertDialog = new AlertDialog.Builder(fragmentBelongActivity).create();
                     alertDialog.setMessage("You click Windows button.");
-                    alertDialog.show();
+                    alertDialog.show();*/
                 }
             });
         }
