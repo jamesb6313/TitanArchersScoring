@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,24 +63,42 @@ public class FragmentOptions extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    //delete last ArrowPoint added
-                    int pos = model.getListSize() - 1;
-                    if (pos >= 0) {
-                        model.deleteArrowPoint(pos);
+                    if (model != null) {
+                        if (model.getListSize() <= 0){
+                            Toast.makeText(fragmentBelongActivity, "Nothing to redo", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        //delete last ArrowPoint added
+                        int pos = model.getListSize() - 1;
+                        if (pos >= 0) {
+                            model.deleteArrowPoint(pos);
+                        }
+
+                        String frScoreCell = "frS" + (pos + 1);
+
+                        // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                        FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
+
+                        // Get scores Fragment object.
+                        Fragment scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores);
+
+                        // Get the TextView object in right Fragment.
+                        // final TextView rightFragmentTextView = (TextView)scoreFragment.getView().findViewById(R.id.frS1);
+                        //TODO; use Objects.requireNonNull() but need API 19 or greater - currently API17
+                        String PACKAGE_NAME = getActivity().getPackageName();
+                        int temp;
+                        if (PACKAGE_NAME != null) {
+                            temp = getResources().getIdentifier(frScoreCell, "id", PACKAGE_NAME);
+                            final TextView rightFragmentTextView = (TextView) scoreFragment.getView().findViewById(temp);
+                            // Set text in right Fragment TextView.
+                            rightFragmentTextView.setText("00");
+                        } else {
+                            Log.d("MyINFO", "Error getting current score TextView in FragmentScores.java");
+                        }
+
+
+                        Toast.makeText(fragmentBelongActivity, "Redo last arrow", Toast.LENGTH_LONG).show();
                     }
-
-                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
-                    FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
-
-                    // Get scores Fragment object.
-                    Fragment scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores);
-
-                    // Get the TextView object in right Fragment.
-                    final TextView rightFragmentTextView = (TextView)scoreFragment.getView().findViewById(R.id.frS1);
-
-                    // Set text in right Fragment TextView.
-                    rightFragmentTextView.setText("00");
-                    Toast.makeText(fragmentBelongActivity, "Redo last arrow", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -89,38 +108,7 @@ public class FragmentOptions extends Fragment {
             iosButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
-                    FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
-
-                    // Get target Fragment object from MainActivity()
-                    Fragment targetImage = fragmentManager.findFragmentById(R.id.fragmentTarget);
-                    v_target = targetImage.getView();
-
-/*                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
-                    if (targetImage.isHidden()) {
-                        ft.show(targetImage);
-                        iosButton.setText("Hide Target");
-                    } else {
-                        ft.hide(targetImage);
-                        iosButton.setText("Show Target");
-                    }
-                    ft.commit();*/
-                    //Toast.makeText(fragmentBelongActivity, "You click IOS button.", Toast.LENGTH_SHORT).show();
-
-                    Intent intentShareFile = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    intentShareFile.addCategory(Intent.CATEGORY_OPENABLE);
-                    //intentShareFile.setType("text/html; charset=UTF-8");
-                    intentShareFile.setType("image/*");
-
-                    String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm_ss", System.currentTimeMillis()).toString();
-                    fn = "TitanTargetImage_" + timeStr + ".jpg";
-                    //takeScreenShot(v_target);
-
-
-                    intentShareFile.putExtra(Intent.EXTRA_TITLE, fn);
-                    startActivityForResult(intentShareFile, CREATE_REQUEST_CODE);
-                    //startActivity(Intent.createChooser(intentShareFile, "Share image"));
-
+                    Toast.makeText(fragmentBelongActivity, "In development", Toast.LENGTH_SHORT).show();
                 }
             });
 
