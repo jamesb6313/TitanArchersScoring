@@ -12,6 +12,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     public Fragment frag1;
+    public Fragment frag3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +23,29 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         frag1 = fm.findFragmentById(R.id.fragmentScoreCard);
+        //frag3 = fm.findFragmentById(R.id.fragmentTargetImage);
         Fragment frag2 = fm.findFragmentById(R.id.fragmentTarget);
 
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(frag1);
+        //ft.hide(frag3);
+        ft.commit();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        //boolean fragHidden = true;
+        //FragmentManager fm = getSupportFragmentManager();
+        //Fragment frag2 = fm.findFragmentById(R.id.fragmentTarget);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (!frag1.isHidden()){
+            ft.hide(frag1);
+        } else {
+            super.onBackPressed();
+        }
         ft.commit();
     }
 

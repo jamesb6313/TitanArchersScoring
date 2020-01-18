@@ -16,7 +16,7 @@
         android:id="@+id/fOptionIos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="IOS"
+        android:text="Show Target"
         android:textAllCaps="false"
         android:textSize="20dp" />
 

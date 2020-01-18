@@ -1,7 +1,15 @@
 package com.titanarchers;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +25,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class FragmentOptions extends Fragment {
     private ArrowPointViewModel model;
 
+    private View v_target;
+    private String fn;
+    private static final int CREATE_REQUEST_CODE = 40;
 
     @Override
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
@@ -68,12 +85,42 @@ public class FragmentOptions extends Fragment {
 
 
             // Click this button will show a Toast popup.
-            Button iosButton = retView.findViewById(R.id.fOptionIos);
+            final Button iosButton = retView.findViewById(R.id.fOptionIos);
             iosButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //paintView.clear();
-                    Toast.makeText(fragmentBelongActivity, "You click IOS button.", Toast.LENGTH_SHORT).show();
+                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                    FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
+
+                    // Get target Fragment object from MainActivity()
+                    Fragment targetImage = fragmentManager.findFragmentById(R.id.fragmentTarget);
+                    v_target = targetImage.getView();
+
+/*                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+                    if (targetImage.isHidden()) {
+                        ft.show(targetImage);
+                        iosButton.setText("Hide Target");
+                    } else {
+                        ft.hide(targetImage);
+                        iosButton.setText("Show Target");
+                    }
+                    ft.commit();*/
+                    //Toast.makeText(fragmentBelongActivity, "You click IOS button.", Toast.LENGTH_SHORT).show();
+
+                    Intent intentShareFile = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                    intentShareFile.addCategory(Intent.CATEGORY_OPENABLE);
+                    //intentShareFile.setType("text/html; charset=UTF-8");
+                    intentShareFile.setType("image/*");
+
+                    String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm_ss", System.currentTimeMillis()).toString();
+                    fn = "TitanTargetImage_" + timeStr + ".jpg";
+                    //takeScreenShot(v_target);
+
+
+                    intentShareFile.putExtra(Intent.EXTRA_TITLE, fn);
+                    startActivityForResult(intentShareFile, CREATE_REQUEST_CODE);
+                    //startActivity(Intent.createChooser(intentShareFile, "Share image"));
+
                 }
             });
 
@@ -83,21 +130,26 @@ public class FragmentOptions extends Fragment {
             windowsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
-                    FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
+                    if (model != null && model.getListSize() > 0) {
+                        // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                        FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
 
-                    // Get scores Fragment object.
-                    Fragment scorecard = fragmentManager.findFragmentById(R.id.fragmentScoreCard);
+                        // Get scores Fragment object.
+                        Fragment scorecard = fragmentManager.findFragmentById(R.id.fragmentScoreCard);
 
-                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
-                    if (scorecard.isHidden()) {
-                        ft.show(scorecard);
-                        windowsButton.setText("Hide Card");
+                        FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+                        if (scorecard.isHidden()) {
+                            ft.show(scorecard);
+                            //windowsButton.setText("Hide Card");
+                        } else {
+                            ft.hide(scorecard);
+                            //windowsButton.setText("Show Card");
+                        }
+                        ft.commit();
                     } else {
-                        ft.hide(scorecard);
-                        windowsButton.setText("Show Card");
+                        Toast.makeText(fragmentBelongActivity, "Nothing to show.", Toast.LENGTH_LONG).show();
+
                     }
-                    ft.commit();
 /*                    AlertDialog alertDialog = new AlertDialog.Builder(fragmentBelongActivity).create();
                     alertDialog.setMessage("You click Windows button.");
                     alertDialog.show();*/
@@ -106,6 +158,91 @@ public class FragmentOptions extends Fragment {
         }
 
         return retView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode,resultCode,resultData);
+
+        Uri currentUri;
+
+        if (resultCode == Activity.RESULT_OK)
+        {
+
+            if (requestCode == CREATE_REQUEST_CODE)
+            {
+                if (resultData != null) {
+                    currentUri = resultData.getData();
+                    //writeViewImage(currentUri);
+                    takeScreenShot(v_target,currentUri);
+                }
+            }
+        }
+    }
+
+    /*
+
+    public void sendScreenShot(File imageFile) {
+        Uri uri = Uri.fromFile(imageFile);
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        //String email = "test@gmail.com";
+        //shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Screenshot");
+        //shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/*");
+	    startActivity(Intent.createChooser(shareIntent, "Share image"));
+    }*/
+
+    public void takeScreenShot(View v1, Uri uri){
+        String mPath = Environment.getExternalStorageDirectory().toString() + "/" + fn;
+
+        // create bitmap screen capture
+        Bitmap bitmap;
+        //v1 = findViewById(R.id.fragmentTarget);
+        v1.setDrawingCacheEnabled(true);
+
+        // bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+        bitmap = loadBitmapFromView(v1, v1.getWidth(), v1.getHeight());
+        v1.setDrawingCacheEnabled(false);
+        //OutputStream fout = null;
+
+        try {
+            /*
+            OutputStream outFile = getActivity().getContentResolver().openOutputStream(uri);
+            bm.compress(Bitmap.CompressFormat.JPEG, 50,outFile);
+             */
+            OutputStream fout = getActivity().getContentResolver().openOutputStream(uri);
+            //File imageFile = new File(mPath);
+
+            //fout = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fout);
+            fout.flush();
+            fout.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //sendScreenShot(imageFile);
+    }
+
+    public static Bitmap loadBitmapFromView(View v, int width, int height) {
+        Bitmap b = Bitmap.createBitmap(width , height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, width, height);
+
+        //Get the view’s background
+        Drawable bgDrawable =v.getBackground();
+        if (bgDrawable!=null)
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(c);
+        else
+            //does not have background drawable, then draw white background on the canvas
+            c.drawColor(Color.WHITE);
+        v.draw(c);
+        return b;
     }
 
 }
