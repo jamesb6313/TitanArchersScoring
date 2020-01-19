@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -57,12 +53,15 @@ public class FragmentOptions extends Fragment {
 
         if(retView!=null)
         {
-            // Click this button will show the text in right fragment.
-            Button androidButton = retView.findViewById(R.id.fOptionAndroid);
+
+            final Button androidButton = retView.findViewById(R.id.fOptionAndroid);
+            final Button iosButton = retView.findViewById(R.id.fOptionIos);
+            final Button windowsButton = retView.findViewById(R.id.fOptionWindows);
+
+            // Click this button to REDO Last ArrowPoint placed
             androidButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     if (model != null) {
                         if (model.getListSize() <= 0){
                             Toast.makeText(fragmentBelongActivity, "Nothing to redo", Toast.LENGTH_LONG).show();
@@ -74,8 +73,6 @@ public class FragmentOptions extends Fragment {
                             model.deleteArrowPoint(pos);
                         }
 
-                        String frScoreCell = "frS" + (pos + 1);
-
                         // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
                         FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
 
@@ -83,8 +80,8 @@ public class FragmentOptions extends Fragment {
                         Fragment scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores);
 
                         // Get the TextView object in right Fragment.
-                        // final TextView rightFragmentTextView = (TextView)scoreFragment.getView().findViewById(R.id.frS1);
                         //TODO; use Objects.requireNonNull() but need API 19 or greater - currently API17
+                        String frScoreCell = "frS" + (pos + 1);
                         String PACKAGE_NAME = getActivity().getPackageName();
                         int temp;
                         if (PACKAGE_NAME != null) {
@@ -96,15 +93,12 @@ public class FragmentOptions extends Fragment {
                             Log.d("MyINFO", "Error getting current score TextView in FragmentScores.java");
                         }
 
-
                         Toast.makeText(fragmentBelongActivity, "Redo last arrow", Toast.LENGTH_LONG).show();
                     }
                 }
             });
 
-
-            // Click this button will show a Toast popup.
-            final Button iosButton = retView.findViewById(R.id.fOptionIos);
+            // Click this button will show a Toast popup - TODO Indevelopment - Enter Distance????.
             iosButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -112,9 +106,7 @@ public class FragmentOptions extends Fragment {
                 }
             });
 
-
-            // Click this button will show an alert dialog.
-            final Button windowsButton = retView.findViewById(R.id.fOptionWindows);
+            // Click this button will show ScoreCard (WebView with PNG img & HTML)
             windowsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -147,7 +139,7 @@ public class FragmentOptions extends Fragment {
 
         return retView;
     }
-
+/*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode,resultCode,resultData);
@@ -167,7 +159,7 @@ public class FragmentOptions extends Fragment {
             }
         }
     }
-
+*/
     /*
 
     public void sendScreenShot(File imageFile) {
@@ -181,7 +173,7 @@ public class FragmentOptions extends Fragment {
         shareIntent.setType("image/*");
 	    startActivity(Intent.createChooser(shareIntent, "Share image"));
     }*/
-
+/*
     public void takeScreenShot(View v1, Uri uri){
         String mPath = Environment.getExternalStorageDirectory().toString() + "/" + fn;
 
@@ -196,10 +188,8 @@ public class FragmentOptions extends Fragment {
         //OutputStream fout = null;
 
         try {
-            /*
-            OutputStream outFile = getActivity().getContentResolver().openOutputStream(uri);
-            bm.compress(Bitmap.CompressFormat.JPEG, 50,outFile);
-             */
+            //OutputStream outFile = getActivity().getContentResolver().openOutputStream(uri);
+            //bm.compress(Bitmap.CompressFormat.JPEG, 50,outFile);
             OutputStream fout = getActivity().getContentResolver().openOutputStream(uri);
             //File imageFile = new File(mPath);
 
@@ -232,5 +222,5 @@ public class FragmentOptions extends Fragment {
         v.draw(c);
         return b;
     }
-
+*/
 }

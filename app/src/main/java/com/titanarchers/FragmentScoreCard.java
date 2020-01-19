@@ -1,25 +1,19 @@
 package com.titanarchers;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.text.format.DateFormat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -27,12 +21,10 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -41,14 +33,13 @@ public class FragmentScoreCard extends Fragment {
 
     private ArrowPointViewModel model;
 
-    WebView wv_ScoreCard;
-    TargetView v_TargetImage;
-    View v_target;
+    private WebView wv_ScoreCard;
+    //TargetView v_TargetImage;
+    private View v_target;
 
 
-    Bitmap mBitmap;
-    Button btn_share;
-    String html;
+    //Bitmap mBitmap;
+    //String html;
 
     private String fn;
     private static final int CREATE_REQUEST_CODE = 40;
@@ -73,12 +64,9 @@ public class FragmentScoreCard extends Fragment {
                 //Save v_target view to append img src PNG file in webView HTML
                 baseUrl = takeScreenShot(v_target, newFile);    // have v_target save as file
 
-                // build HTML to Load into webView
-                //File fImage = savebitmap("newTargetImage.png");
-                //baseUrl = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fImage);
-
                 String html = createHTMLTable("newTargetImage.png");
                 wv_ScoreCard.loadDataWithBaseURL(baseUrl.toString(), html, "text/html", "UTF-8", null);
+
                 //Works without these stmts - try later
                 /*wv_ScoreCard.setWebViewClient(new WebViewClient());
                 wv_ScoreCard.getSettings().setBuiltInZoomControls(true);
@@ -96,6 +84,7 @@ public class FragmentScoreCard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_scorecard, container);
+        Button btn_share, btn_save;
 
         if (retView != null) {
             // Get ref to webView
@@ -120,13 +109,24 @@ public class FragmentScoreCard extends Fragment {
                 }
             });
 
+            btn_save = retView.findViewById(R.id.btn_save);
+            btn_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //Uri pictureUri;
+                    //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
+                    setBtn_save(wv_ScoreCard);
+                }
+            });
+
         }
         return retView;
 
     }
 
     //SEE:https://guides.codepath.com/android/Sharing-Content-with-Intents (using file Provider - create res/xml/fileprovider.xml , change AndroidManifest.xml)
-    public Uri takeScreenShot(View v1, File fn) {
+    private Uri takeScreenShot(View v1, File fn) {
         // create bitmap screen capture
         Bitmap bitmap;
         v1.setDrawingCacheEnabled(true);
@@ -138,13 +138,13 @@ public class FragmentScoreCard extends Fragment {
         Uri newPictureUri;
         newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
 
-        OutputStream outStream = null;
+        //OutputStream outStream = null;
 
         if (fn.exists()) {
             fn.delete();
 
             newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
-            Log.e("newFile exist", "" + fn + ",Bitmap= " + newPictureUri.getPath().toString());
+            Log.e("newFile exist", "" + fn + ",Bitmap= " + newPictureUri.getPath());
         }
         try {
             OutputStream fout = getActivity().getContentResolver().openOutputStream(newPictureUri);
@@ -162,7 +162,7 @@ public class FragmentScoreCard extends Fragment {
 
     }
 
-    public static Bitmap loadBitmapFromView(View v, int width, int height) {
+    private static Bitmap loadBitmapFromView(View v, int width, int height) {
         Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.layout(0, 0, width, height);
@@ -180,14 +180,16 @@ public class FragmentScoreCard extends Fragment {
     }
 
     private void setBtn_share(View wv_ScoreCard) {
+        String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
+        fn ="TitanTargetImage_"+timeStr +".png";
+
         Uri pictureUri;
-        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
+        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), fn);
         pictureUri = takeScreenShot(wv_ScoreCard, file);
 
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        //shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
         shareIntent.setType("image/*");
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -195,23 +197,83 @@ public class FragmentScoreCard extends Fragment {
 
     }
 
-    private void setBtn_save(){
-        String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm_ss", System.currentTimeMillis()).toString();
+    private void setBtn_save(View wv_ScoreCard){
+        String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
         fn ="TitanTargetImage_"+timeStr +".png";
 
-        Uri pictureUri;
-        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), fn);
-        pictureUri = takeScreenShot(wv_ScoreCard, file);
+        //Uri pictureUri;
+        //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), fn);
+        //pictureUri = takeScreenShot(wv_ScoreCard, file);
 
         Intent intentShareFile = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intentShareFile.addCategory(Intent.CATEGORY_OPENABLE);
+
+        intentShareFile.putExtra(Intent.EXTRA_TITLE, fn);
+        //intentShareFile.putExtra(Intent.EXTRA_STREAM, pictureUri);
         intentShareFile.setType("image/*");
 
-        intentShareFile.putExtra(Intent.EXTRA_TITLE, pictureUri);
         startActivityForResult(intentShareFile, CREATE_REQUEST_CODE);
 
+        //need onActivityResult - see below
     }
 
+/*
+TODO: causes API deprecated error
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode,resultCode,resultData);
+
+        Uri currentUri;
+
+        if (resultCode == Activity.RESULT_OK)
+        {
+
+            if (requestCode == CREATE_REQUEST_CODE)
+            {
+                if (resultData != null) {
+                    currentUri = resultData.getData();
+                    //writeFileContent(currentUri);
+                }
+            }
+        }
+    }*/
+
+   /* private void writeFileContent(Uri uri)
+    {
+
+        wv_ScoreCard.measure(View.MeasureSpec.makeMeasureSpec(
+                View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        wv_ScoreCard.layout(0, 0, wv_ScoreCard.getMeasuredWidth(), wv_ScoreCard.getMeasuredHeight());
+        wv_ScoreCard.setDrawingCacheEnabled(true);
+        wv_ScoreCard.buildDrawingCache();
+        Bitmap bm = Bitmap.createBitmap(wv_ScoreCard.getMeasuredWidth(),
+                wv_ScoreCard.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas bigcanvas = new Canvas(bm);
+        Paint paint = new Paint();
+        int iHeight = bm.getHeight();
+        bigcanvas.drawBitmap(bm, 0, iHeight, paint);
+        wv_ScoreCard.draw(bigcanvas);
+        System.out.println("WIDTH=" + bigcanvas.getWidth());
+        System.out.println("HEIGHT=" + bigcanvas.getHeight());
+
+        if (bm != null) {
+            try {
+                OutputStream fOut = getActivity().getContentResolver().openOutputStream(uri);
+
+                bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                fOut.flush();
+                fOut.close();
+                bm.recycle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }*/
 
     private String createHTMLTable(String imgFileName) {
 
@@ -268,42 +330,4 @@ public class FragmentScoreCard extends Fragment {
 
         return html;
     }
-
-    /*
-    private File savebitmap(String filename) {
-
-        Uri newPictureUri;
-        File newFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
-        newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", newFile);
-
-
-        OutputStream outStream = null;
-
-        if (newFile.exists()) {
-            newFile.delete();
-
-            newFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
-            newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", newFile);
-            //file = new File(extStorageDirectory, filename);
-            Log.e("newFile exist", "" + newFile + ",Bitmap= " + filename);
-        }
-        try {
-            // make a new bitmap from your file
-            Bitmap bitmap = BitmapFactory.decodeFile(newFile.getName());
-            //Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.archery_target);
-
-            outStream = getActivity().getContentResolver().openOutputStream(newPictureUri);
-
-            //outStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-            outStream.flush();
-            outStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.e("newFile", "" + newFile);
-        return newFile;
-
-    }
-*/
 }

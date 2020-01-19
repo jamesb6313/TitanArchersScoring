@@ -271,7 +271,7 @@ public class TargetView extends View {
         mArrowPointList = mModel.getArrowPoints().getValue();
 
         int arrowCount = (mArrowPointList == null) ? 0 : mArrowPointList.size();
-        int numGroups = 0;
+        int numGroups;
         int rmdr = arrowCount % 3;
 
         if (arrowCount == 0) {

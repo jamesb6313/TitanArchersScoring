@@ -5,6 +5,6 @@
     <string name="subtotal">Subtotal:0</string>
     <string name="total">Total:0</string>
     <string name="shareScoreCard">Share Score Card</string>
-    <string name="shareTargetImage">Share Target Image</string>
+    <string name="saveScoreCard">Save Score Card</string>
     <string name="nextActivity">Score Card</string>
 </resources>
