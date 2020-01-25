@@ -20,8 +20,8 @@ import java.util.List;
 
 public class TargetView extends View {
 
-    public static int BRUSH_SIZE = 6;                 //strokeWidth
-    public static final int DEFAULT_COLOR = Color.GREEN;
+    private static final int BRUSH_SIZE = 6;                 //strokeWidth
+    private static final int DEFAULT_COLOR = Color.GREEN;
     private static final float TOUCH_TOLERANCE = 4;
     private static final int TOUCH_OFFSET = 100;
     private static final float ARROW_POINT_RADIUS = 10;
@@ -29,16 +29,16 @@ public class TargetView extends View {
     private Bitmap mBitmap;
     private int currentColor = DEFAULT_COLOR;
     private int mStrokeWidth;
-    private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     private float mScaleFactor;
     private float mArrowScaledRadius;
 
     private float centerX;
     private float centerY;
     private float mX, mY;
-    private float[] mRadii = new float[11];
+    private final float[] mRadii = new float[11];
 
-    private ArrowPointViewModel mModel;
+    private final ArrowPointViewModel mModel;
     private List<ArrowPoint> mArrowPointList = new ArrayList<>();
 
     private  OnCoordinateUpdate mCoordinatesListener;

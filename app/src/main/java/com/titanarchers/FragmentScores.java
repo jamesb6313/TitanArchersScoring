@@ -18,7 +18,7 @@ import java.util.List;
 public class FragmentScores extends Fragment {
 
     private TextView tvRow1, tvRow2, tvRow3, tvRow4, tvRow5;
-    private TextView[] mTvScores = new TextView[30];
+    private final TextView[] mTvScores = new TextView[30];
 
     @Override
     public void onCreate(@Nullable Bundle saveInstanceState) {

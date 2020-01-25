@@ -8,24 +8,24 @@
         android:id="@+id/fOptionAndroid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Redo"
+        android:text="@string/redoOption"
         android:textAllCaps="false"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/fOptionIos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show Target"
+        android:text="@string/detailOption"
         android:textAllCaps="false"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/fOptionWindows"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show Card"
+        android:text="@string/showOption"
         android:textAllCaps="false"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
 </LinearLayout>

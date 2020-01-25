@@ -7,7 +7,7 @@ public class ArrowPoint {
     public float y;
 
 
-    public ArrowPoint(int score, int color, float x, float y) {
+    private ArrowPoint(int score, int color, float x, float y) {
         this.score = score;
         this.color = color;
         this.x = x;

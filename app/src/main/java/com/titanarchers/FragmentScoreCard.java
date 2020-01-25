@@ -41,7 +41,6 @@ public class FragmentScoreCard extends Fragment {
     //Bitmap mBitmap;
     //String html;
 
-    private String fn;
     private static final int CREATE_REQUEST_CODE = 40;
 
     @Override
@@ -84,7 +83,7 @@ public class FragmentScoreCard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_scorecard, container);
-        Button btn_share, btn_save;
+        Button btn_share;//, btn_save;
 
         if (retView != null) {
             // Get ref to webView
@@ -109,7 +108,7 @@ public class FragmentScoreCard extends Fragment {
                 }
             });
 
-            btn_save = retView.findViewById(R.id.btn_save);
+/*            btn_save = retView.findViewById(R.id.btn_save);
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,7 +117,7 @@ public class FragmentScoreCard extends Fragment {
                     //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
                     setBtn_save(wv_ScoreCard);
                 }
-            });
+            });*/
 
         }
         return retView;
@@ -180,6 +179,7 @@ public class FragmentScoreCard extends Fragment {
     }
 
     private void setBtn_share(View wv_ScoreCard) {
+        String fn;
         String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
         fn ="TitanTargetImage_"+timeStr +".png";
 
@@ -196,7 +196,7 @@ public class FragmentScoreCard extends Fragment {
         startActivity(Intent.createChooser(shareIntent, "Share images..."));
 
     }
-
+/*
     private void setBtn_save(View wv_ScoreCard){
         String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
         fn ="TitanTargetImage_"+timeStr +".png";
@@ -216,7 +216,7 @@ public class FragmentScoreCard extends Fragment {
 
         //need onActivityResult - see below
     }
-
+*/
 /*
 TODO: causes API deprecated error
 
@@ -277,7 +277,9 @@ TODO: causes API deprecated error
 
     private String createHTMLTable(String imgFileName) {
 
+        String timeStr = DateFormat.format("dd_MM_yyyy hh:mm", System.currentTimeMillis()).toString();
         List<ArrowPoint> apList = model.getArrowPoints().getValue();
+
         final StringBuilder sb_HTML = new StringBuilder();
         String imageElem = "<img src=" + "'" + imgFileName +"' style='width:100%'>";
         String html = " <html><head><style>" +
@@ -324,8 +326,10 @@ TODO: causes API deprecated error
                 sb_HTML.append("<td>00</td></tr>");
             }
         }
-        sb_HTML.append("<tr> <td style='text-align:right' colspan='6'>Total</td><td>"+total+"</td></tr>");
-        sb_HTML.append("</table>");
+        html = "<tr> <td style='text-align:right' colspan='6'>Total</td><td>"+total+"</td></tr>";
+        sb_HTML.append(html);
+        html = "</table></br><h3> Date: " + timeStr + "</h3>";
+        sb_HTML.append(html);
         html = sb_HTML.toString();
 
         return html;
