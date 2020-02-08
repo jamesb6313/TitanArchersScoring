@@ -1,5 +1,6 @@
 package com.titanarchers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,8 +42,6 @@ public class FragmentOptions extends Fragment {
 
         // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
         final FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
-        final Fragment scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores); // Get scores Fragment object.
-
 
         if(retView!=null)
         {
@@ -72,8 +71,10 @@ public class FragmentOptions extends Fragment {
                         String PACKAGE_NAME = getActivity().getPackageName();
                         int temp;
                         if (PACKAGE_NAME != null) {
+                            Fragment scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores); // Get scores Fragment object.
+                            scoreFragment = fragmentManager.findFragmentById(R.id.fragmentScores);
                             temp = getResources().getIdentifier(frScoreCell, "id", PACKAGE_NAME);
-                            final TextView rightFragmentTextView = scoreFragment.getView().findViewById(temp);
+                            TextView rightFragmentTextView = scoreFragment.getView().findViewById(temp);
                             // Set text in right Fragment TextView.
                             rightFragmentTextView.setText(getResources().getString(R.string.blankScore));
                         } else {
@@ -85,11 +86,23 @@ public class FragmentOptions extends Fragment {
                 }
             });
 
-            // Click this button will show a Toast popup - TODO Indevelopment - Enter Distance????.
+            // Click this button will show a Toast popup - TODO Indevelopment - Enter Distance & Archer's Name????.
             detailsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(fragmentBelongActivity, "In development", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    startActivity(intent);
+
+/*                    Fragment details = fragmentManager.findFragmentById(R.id.fragmentDetails);  // Get details Fragment object.
+
+                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+
+                    if (details.isHidden()) {
+                        ft.show(details);
+                    }
+                    ft.commit();*/
+                    //Toast.makeText(fragmentBelongActivity, "In development", Toast.LENGTH_SHORT).show();
                 }
             });
 

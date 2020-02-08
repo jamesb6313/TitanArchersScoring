@@ -9,4 +9,10 @@
     <string name="redoOption">Redo</string>
     <string name="detailOption">Details</string>
     <string name="showOption">Show Target</string>
+    <string name="archerName">Enter your name</string>
+    <string name="labelName">Name:</string>
+    <string name="targetDistance">Enter target\s distance</string>
+    <string name="labelDistance">Distance:</string>
+    <string name="saveDetails">Save</string>
+    <string name="cancelDetails">Cancel</string>
 </resources>
