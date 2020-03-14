@@ -5,8 +5,7 @@ Titan Archers Scoring Card TEST Application (30 Arrows - Target Scoring)
     Put it in one of your phone's folders (e.g. download)
     Locate this file on phone and tap it to install
 
-You will get two warnings from Play Protect, but
-to download and install you must:
+You will get two warnings from Play Protect. To download and install you must:
 
     First message answer Install Anyways
     Second message answer Don't send
