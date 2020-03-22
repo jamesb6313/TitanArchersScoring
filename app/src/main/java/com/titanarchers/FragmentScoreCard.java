@@ -1,6 +1,7 @@
 package com.titanarchers;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +63,7 @@ public class FragmentScoreCard extends Fragment {
                 File newFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
 
                 //Save v_target view to append img src PNG file in webView HTML
+                //TODO - currently uses next arrow color instead of current arrow color. Need to sync
                 baseUrl = takeScreenShot(v_target, newFile);    // have v_target save as file
 
                 String html = createHTMLTable("newTargetImage.png");
@@ -180,7 +183,7 @@ public class FragmentScoreCard extends Fragment {
 
     private void setBtn_share(View wv_ScoreCard) {
         String fn;
-        String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
+        String timeStr = DateFormat.format("MM_dd_yyyy_hh_mm", System.currentTimeMillis()).toString();
         fn ="TitanTargetImage_"+timeStr +".png";
 
         Uri pictureUri;
@@ -275,9 +278,27 @@ TODO: causes API deprecated error
 
     }*/
 
+    public int defaultDistance;
+    public String defaultName;
+    public String defaultUnits;
+
+    private boolean loadSavedPreferences() {
+        boolean result = false;
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        defaultDistance = sharedPreferences.getInt("storedDistance", defaultDistance);
+        defaultName = sharedPreferences.getString("storedName", defaultName);
+        defaultUnits = sharedPreferences.getString("storedUnits", defaultUnits);
+        if (defaultName != null) {
+            result = defaultName.equalsIgnoreCase("YourName");
+        }
+        return result;
+    }
+
     private String createHTMLTable(String imgFileName) {
 
-        String timeStr = DateFormat.format("dd_MM_yyyy hh:mm", System.currentTimeMillis()).toString();
+        String timeStr = DateFormat.format("MMM dd, yyyy hh:mm a", System.currentTimeMillis()).toString();
         List<ArrowPoint> apList = model.getArrowPoints().getValue();
 
         final StringBuilder sb_HTML = new StringBuilder();
@@ -287,7 +308,7 @@ TODO: causes API deprecated error
                 "</style></head><body>";
         html = html + imageElem +
                 //"<img src='archery_target.9.png'  style='width:100%'>" +
-                "</br> <table border='1' bordercolor='green' style='width:100%;height:10%'> <tr><b><th>A1</th><th>A2</th><th>A3</th><th>A4</th><th>A5</th><th>A6</th><th>Total</th></b></tr>";
+                "<br> <table border='1' bordercolor='green' style='width:100%;height:10%'> <tr><b><th>A1</th><th>A2</th><th>A3</th><th>A4</th><th>A5</th><th>A6</th><th>Total</th></b></tr>";
         sb_HTML.append(html);
         sb_HTML.append("<tr>");
 
@@ -328,8 +349,13 @@ TODO: causes API deprecated error
         }
         html = "<tr> <td style='text-align:right' colspan='6'>Total</td><td>"+total+"</td></tr>";
         sb_HTML.append(html);
-        html = "</table></br><h3> Date: " + timeStr + "</h3>";
+        html = "</table><h3> Date: " + timeStr + "</h3>";
         sb_HTML.append(html);
+
+        if (loadSavedPreferences()) {
+            html = "<br><h3> Name: " + defaultName + " at " + defaultDistance + " " + defaultUnits + "</h3>";
+            sb_HTML.append(html);
+        }
         html = sb_HTML.toString();
 
         return html;

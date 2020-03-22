@@ -15,4 +15,14 @@
     <string name="labelDistance">Distance:</string>
     <string name="saveDetails">Save</string>
     <string name="cancelDetails">Cancel</string>
+    <string name="setUnitsPrompt">Set Distance Units</string>
+    <string-array name="units">
+        <item>Meters</item>
+        <item>Feet</item>
+        <item>Yards</item>
+    </string-array>
+    <string name="nDialog_title">Name and Distance Dialog</string>
+    <string name="nDialog_text">Do you wish to enter your name and the targets distance on the score card?</string>
+
+
 </resources>
