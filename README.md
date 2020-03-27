@@ -1,4 +1,4 @@
-# TitanArchersScoring
+# Titan Archers Scoring App
 Titan Archers Scoring Card TEST Application (30 Arrows - Target Scoring)
 
 ## Information about Titan Archers Scoring App can be found at: 
