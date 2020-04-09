@@ -20,10 +20,6 @@ import androidx.lifecycle.ViewModelProviders;
 public class FragmentOptions extends Fragment {
     private ArrowPointViewModel model;
 
-    //private View v_target;
-    //private String fn;
-    //private static final int CREATE_REQUEST_CODE = 40;
-
     @Override
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
@@ -93,16 +89,6 @@ public class FragmentOptions extends Fragment {
 
                     Intent intent = new Intent(getActivity(), DetailsActivity.class);
                     startActivity(intent);
-
-/*                    Fragment details = fragmentManager.findFragmentById(R.id.fragmentDetails);  // Get details Fragment object.
-
-                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
-
-                    if (details.isHidden()) {
-                        ft.show(details);
-                    }
-                    ft.commit();*/
-                    //Toast.makeText(fragmentBelongActivity, "In development", Toast.LENGTH_SHORT).show();
                 }
             });
 

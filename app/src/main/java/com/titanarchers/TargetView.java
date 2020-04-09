@@ -192,18 +192,6 @@ public class TargetView extends View {
 
     }
 
-    /*
-    private void touchUp() {
-        int score;
-        score = getScore(mX, mY - TOUCH_OFFSET);
-
-        if (mCoordinatesListener != null) {
-            mCoordinatesListener.onUpdate(score, currentColor, mX, mY - TOUCH_OFFSET);
-        }
-
-    }
-     */
-
     @Override
     public boolean performClick() {
         super.performClick();

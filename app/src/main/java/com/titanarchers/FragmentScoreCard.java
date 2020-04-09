@@ -36,14 +36,8 @@ public class FragmentScoreCard extends Fragment {
     private ArrowPointViewModel model;
 
     private WebView wv_ScoreCard;
-    //TargetView v_TargetImage;
     private View v_target;
 
-
-    //Bitmap mBitmap;
-    //String html;
-
-    private static final int CREATE_REQUEST_CODE = 40;
 
     @Override
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
@@ -68,15 +62,6 @@ public class FragmentScoreCard extends Fragment {
 
                 String html = createHTMLTable("newTargetImage.png");
                 wv_ScoreCard.loadDataWithBaseURL(baseUrl.toString(), html, "text/html", "UTF-8", null);
-
-                //Works without these stmts - try later
-                /*wv_ScoreCard.setWebViewClient(new WebViewClient());
-                wv_ScoreCard.getSettings().setBuiltInZoomControls(true);
-                wv_ScoreCard.getSettings().setDisplayZoomControls(false);
-                wv_ScoreCard. getSettings().setSupportZoom(true);
-                wv_ScoreCard.getSettings().setUseWideViewPort(true);
-                wv_ScoreCard.getSettings().setLoadWithOverviewMode(true);
-                wv_ScoreCard.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);*/
             }
         }
     }
@@ -86,7 +71,7 @@ public class FragmentScoreCard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_scorecard, container);
-        Button btn_share;//, btn_save;
+        Button btn_share;
 
         if (retView != null) {
             // Get ref to webView
@@ -104,23 +89,9 @@ public class FragmentScoreCard extends Fragment {
             btn_share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    //Uri pictureUri;
-                    //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
                     setBtn_share(wv_ScoreCard);
                 }
             });
-
-/*            btn_save = retView.findViewById(R.id.btn_save);
-            btn_save.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    //Uri pictureUri;
-                    //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
-                    setBtn_save(wv_ScoreCard);
-                }
-            });*/
 
         }
         return retView;
@@ -133,14 +104,11 @@ public class FragmentScoreCard extends Fragment {
         Bitmap bitmap;
         v1.setDrawingCacheEnabled(true);
 
-        // bitmap = Bitmap.createBitmap(v1.getDrawingCache());
         bitmap = loadBitmapFromView(v1, v1.getWidth(), v1.getHeight());
         v1.setDrawingCacheEnabled(false);
 
         Uri newPictureUri;
         newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
-
-        //OutputStream outStream = null;
 
         if (fn.exists()) {
             fn.delete();
@@ -199,84 +167,7 @@ public class FragmentScoreCard extends Fragment {
         startActivity(Intent.createChooser(shareIntent, "Share images..."));
 
     }
-/*
-    private void setBtn_save(View wv_ScoreCard){
-        String timeStr = DateFormat.format("dd_MM_yyyy_hh_mm", System.currentTimeMillis()).toString();
-        fn ="TitanTargetImage_"+timeStr +".png";
 
-        //Uri pictureUri;
-        //File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), fn);
-        //pictureUri = takeScreenShot(wv_ScoreCard, file);
-
-        Intent intentShareFile = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intentShareFile.addCategory(Intent.CATEGORY_OPENABLE);
-
-        intentShareFile.putExtra(Intent.EXTRA_TITLE, fn);
-        //intentShareFile.putExtra(Intent.EXTRA_STREAM, pictureUri);
-        intentShareFile.setType("image/*");
-
-        startActivityForResult(intentShareFile, CREATE_REQUEST_CODE);
-
-        //need onActivityResult - see below
-    }
-*/
-/*
-TODO: causes API deprecated error
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        super.onActivityResult(requestCode,resultCode,resultData);
-
-        Uri currentUri;
-
-        if (resultCode == Activity.RESULT_OK)
-        {
-
-            if (requestCode == CREATE_REQUEST_CODE)
-            {
-                if (resultData != null) {
-                    currentUri = resultData.getData();
-                    //writeFileContent(currentUri);
-                }
-            }
-        }
-    }*/
-
-   /* private void writeFileContent(Uri uri)
-    {
-
-        wv_ScoreCard.measure(View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        wv_ScoreCard.layout(0, 0, wv_ScoreCard.getMeasuredWidth(), wv_ScoreCard.getMeasuredHeight());
-        wv_ScoreCard.setDrawingCacheEnabled(true);
-        wv_ScoreCard.buildDrawingCache();
-        Bitmap bm = Bitmap.createBitmap(wv_ScoreCard.getMeasuredWidth(),
-                wv_ScoreCard.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
-        Canvas bigcanvas = new Canvas(bm);
-        Paint paint = new Paint();
-        int iHeight = bm.getHeight();
-        bigcanvas.drawBitmap(bm, 0, iHeight, paint);
-        wv_ScoreCard.draw(bigcanvas);
-        System.out.println("WIDTH=" + bigcanvas.getWidth());
-        System.out.println("HEIGHT=" + bigcanvas.getHeight());
-
-        if (bm != null) {
-            try {
-                OutputStream fOut = getActivity().getContentResolver().openOutputStream(uri);
-
-                bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-                fOut.flush();
-                fOut.close();
-                bm.recycle();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }*/
 
     public int defaultDistance;
     public String defaultName;

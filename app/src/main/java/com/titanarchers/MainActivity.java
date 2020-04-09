@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,15 +14,12 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
     public Fragment fragScoreCard;  //fragmentScoreCard
-    //public Fragment fragDetails;
 
     public int defaultDistance = 10;
     public String defaultName = "YourName";
@@ -38,29 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         fragScoreCard = fm.findFragmentById(R.id.fragmentScoreCard);
-        //fragDetails = fm.findFragmentById(R.id.fragmentDetails);
 
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(fragScoreCard);
-        //ft.hide(fragDetails);
         ft.commit();
 
-
-
-
         if (loadSavedPreferences()) {
-            //display SnackBar - see build.gradle Module: app
-//            View parentLayout = findViewById(android.R.id.content);
-////            Snackbar.make(parentLayout, "Do you want to add your name & distance to score card", Snackbar.LENGTH_LONG)
-////                    .setAction("CLOSE", new View.OnClickListener() {
-////                        @Override
-////                        public void onClick(View view) {
-////
-////                        }
-////                    })
-////                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
-////                    .show();
+
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Enter name & distance")
@@ -83,17 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             alertDialog.show();
-            //openDialog();
         }
     }
-
-/*    public void openDialog() {
-        final Dialog dialog = new Dialog(this);
-        //final AlertDialog dialog = new AlertDialog(this);
-
-        dialog.setContentView(R.layout.name_dialog);
-        dialog.setTitle(R.string.nDialog_title);
-    }*/
 
     private boolean loadSavedPreferences() {
         boolean result = false;
@@ -112,25 +84,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        //boolean fragHidden = true;
-        //FragmentManager fm = getSupportFragmentManager();
-        //Fragment frag2 = fm.findFragmentById(R.id.fragmentTarget);
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (!fragScoreCard.isHidden()) {
             ft.hide(fragScoreCard);
         } else {
             super.onBackPressed();
         }
-
-
-/*        if (!fragScoreCard.isHidden()){
-            ft.hide(fragScoreCard);
-        } else if (!fragDetails.isHidden()) {
-            ft.hide(fragDetails);
-        } else if (fragScoreCard.isHidden() && fragDetails.isHidden()) {
-            super.onBackPressed();
-        }*/
         ft.commit();
     }
 
