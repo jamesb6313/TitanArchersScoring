@@ -3,8 +3,10 @@ package com.titanarchers;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     public Fragment fragScoreCard;  //fragmentScoreCard
+    public Fragment fragGroups;     //fragmentGroups
 
     public int defaultDistance = 10;
     public String defaultName = "YourName";
@@ -34,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         fragScoreCard = fm.findFragmentById(R.id.fragmentScoreCard);
-
+        fragGroups = fm.findFragmentById(R.id.fragmentGroups);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(fragScoreCard);
+        ft.hide(fragGroups);
         ft.commit();
 
         if (loadSavedPreferences()) {
@@ -85,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (!fragScoreCard.isHidden()) {
-            ft.hide(fragScoreCard);
+        if (!fragScoreCard.isHidden() || !fragGroups.isHidden()) {
+            if (!fragScoreCard.isHidden()) ft.hide(fragScoreCard);
+            else if (!fragGroups.isHidden()) ft.hide(fragGroups);
         } else {
             super.onBackPressed();
         }
@@ -104,8 +109,37 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case R.id.details:
-                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                startActivity(intent);
+                Intent intentD = new Intent(MainActivity.this, DetailsActivity.class);
+                startActivity(intentD);
+                return true;
+            case R.id.grouping:
+                ArrowPointViewModel arrowModel;
+                arrowModel = ViewModelProviders.of(this).get(ArrowPointViewModel.class);
+
+                if (arrowModel.getListSize() >= 3) {
+                    // Get Fragment belonged Activity
+                    final FragmentActivity fragmentBelongActivity = this;
+                    // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                    final FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
+
+                    Fragment groups = fragmentManager.findFragmentById(R.id.fragmentGroups);  // Get scorecard Fragment object.
+
+                    FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+
+                    if (groups.isHidden()) {
+                        ft.show(groups);
+                        //windowsButton.setText("Hide Card");
+                    } else {
+                        ft.hide(groups);
+                        //windowsButton.setText("Show Card");
+                    }
+                    ft.commit();
+
+                    //Intent intentG = new Intent(MainActivity.this, GroupingActivity.class);
+                    //startActivity(intentG);
+                } else {
+                    Toast.makeText(this, "Nothing to show", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.about:
                 //paintView.clear();

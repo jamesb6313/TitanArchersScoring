@@ -8,6 +8,10 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/grouping"
+        android:title="Grouping"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/about"
         android:title="About"
         app:showAsAction="never" />
