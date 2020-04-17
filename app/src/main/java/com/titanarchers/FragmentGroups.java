@@ -1,13 +1,12 @@
 package com.titanarchers;
 
-import android.graphics.Point;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,10 +14,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,13 +35,20 @@ public class FragmentGroups  extends Fragment {
 
     private RecyclerView recyclerView;
     private CustomAdapter mAdapter;
+    public static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
+    public int drawGroup = FALSE;
+    public int groupMode = FALSE;
+
+    TargetView targetCanvasView;
+    private static final int DEFAULT_COLOR = Color.GREEN;
+    private int ratingColor = DEFAULT_COLOR;
 
     @Override
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
         arrowModel = ViewModelProviders.of(getActivity()).get(ArrowPointViewModel.class);
 
-        apList = arrowModel.getArrowPoints().getValue();
+        //apList = arrowModel.getArrowPoints().getValue();
     }
 
     @Override
@@ -53,6 +58,14 @@ public class FragmentGroups  extends Fragment {
         if (!hidden) {
             apList = arrowModel.getArrowPoints().getValue();
             if (arrowModel != null && apList != null) {
+                // Get Fragment belonged Activity
+                FragmentActivity fragmentBelongActivity = getActivity();
+
+                // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+                FragmentManager fm = fragmentBelongActivity.getSupportFragmentManager();
+
+                Fragment targetCanvasFrag = fm.findFragmentById(R.id.fragmentTarget);
+                targetCanvasView = targetCanvasFrag.getView().findViewById(R.id.targetView);
                 getModel(apList);
             }
         }
@@ -64,11 +77,33 @@ public class FragmentGroups  extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_groups, container);
 
+
+        // Get Fragment belonged Activity
+        //final FragmentActivity fragmentBelongActivity = getActivity();
+
+        // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
+        //final FragmentManager fm = fragmentBelongActivity.getSupportFragmentManager();
+
+
+
         if (retView != null) {
             recyclerView = retView.findViewById(R.id.recycler);
 
-            mAdapter = new CustomAdapter(groupList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mAdapter = new CustomAdapter(groupList, new CustomAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(ArrowGroupModel arrowGroup) {
+
+                    //Fragment targetCanvasFrag = fm.findFragmentById(R.id.fragmentTarget);
+                    //targetCanvasView = targetCanvasFrag.getView().findViewById(R.id.targetView);
+                    //if (drawGroup == FALSE) drawGroup = TRUE;
+                    //else drawGroup = FALSE;
+                    groupMode = TRUE;
+
+                    targetCanvasView.setGroupDrawingStatus(groupMode, groupList);
+                    //Toast.makeText(fragmentBelongActivity, "Group Center = (" +arrowGroup.getGroupCenterX() + ", " + arrowGroup.getGroupCenterY() + ")", Toast.LENGTH_LONG).show();
+                }
+            });
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
@@ -82,6 +117,8 @@ public class FragmentGroups  extends Fragment {
     private void getModel(List<ArrowPoint> arrowList){
         groupList.clear();
 
+        int grpRating;
+
         for(int i = 0; i < NumberOfGroups; i++) {
 
             int idx = i * 3;
@@ -93,13 +130,24 @@ public class FragmentGroups  extends Fragment {
 
                 if (a1 != null && a2 != null && a3 != null) {
                     ArrowGroupModel groupModel = new ArrowGroupModel();
+
+                    groupModel.setGroupTextColor(targetCanvasView.getColorValue(i));
                     groupModel.setArrowPoint1(a1);
                     groupModel.setArrowPoint2(a2);
                     groupModel.setArrowPoint3(a3);
-                    genMaxs(a1, a2, a3);
+
+                    calcGroupCircle(a1, a2, a3);
                     groupModel.setGroupRadius(adjRadius);
                     groupModel.setGroupCenterX(adjMX);
                     groupModel.setGroupCenterY(adjMY);
+
+                    grpRating = calcGroupRating(adjRadius);
+                    groupModel.setGroupRating(grpRating);
+
+                    calcRatingColor(grpRating);
+                    groupModel.setGroupColor(ratingColor);
+                    groupModel.setShowGroup(false);
+
                     groupList.add(groupModel);
                 } else {
                     break;
@@ -130,7 +178,50 @@ public class FragmentGroups  extends Fragment {
     private List<Test> testArray = new ArrayList<>();
     private float adjRadius, adjMX, adjMY;
 
-    private void genMaxs(ArrowPoint p1, ArrowPoint p2, ArrowPoint p3) {
+    private int calcGroupRating(float radius) {
+        int rating = 11;
+        boolean found = false;
+
+        for (int i = 0; i < targetCanvasView.mRadii.length; i++) {
+            float targetRadius = targetCanvasView.mRadii[i];
+            float grpRadius = radius * targetCanvasView.mScaleFactor;
+
+            if (grpRadius < targetRadius) {
+                found = true;
+            }
+            if (found) break;
+            rating--;
+        }
+
+        if (!found) rating = 0;
+        return rating;
+
+    }
+
+    private void calcRatingColor(int grpRating) {
+        switch (grpRating) {
+            case 1: case 2:
+                ratingColor = Color.WHITE;
+                break;
+            case 3: case 4:
+                ratingColor = Color.BLACK;
+                break;
+            case 5: case 6:
+                ratingColor = Color.BLUE;
+                break;
+            case 7: case 8:
+                ratingColor = Color.RED;
+                break;
+            case 9: case 10:
+                ratingColor = Color.YELLOW;
+                break;
+            default:
+                ratingColor = DEFAULT_COLOR;
+                break;
+        }
+    }
+
+    private void calcGroupCircle(ArrowPoint p1, ArrowPoint p2, ArrowPoint p3) {
         float mX, mY;
         int[] distanceToMean = new int[3];
 
@@ -162,11 +253,6 @@ public class FragmentGroups  extends Fragment {
         adjRadius = dist(newPtX,newPtY, testArray.get(0).pt.x, testArray.get(0).pt.y) / 2;
         adjMX = (newPtX + testArray.get(0).pt.x)/2;
         adjMY = (newPtY + testArray.get(0).pt.y)/2;
-/*
-        adjMeans.push( {x : adjMX, y : adjMY } );
-        adjMaxs.push(2 * adjRadius);
-*/
-
     }
 
     class MyComparator implements Comparator<Test> {
