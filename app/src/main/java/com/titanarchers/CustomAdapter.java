@@ -1,5 +1,6 @@
 package com.titanarchers;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -60,6 +62,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvArrowScore1, tvArrowScore2, tvArrowScore3, tvRating;
+        public CardView cvGroup;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -69,6 +72,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             tvArrowScore2 = itemView.findViewById(R.id.arrowScore2);
             tvArrowScore3 = itemView.findViewById(R.id.arrowScore3);
             tvRating = itemView.findViewById(R.id.rating);
+            cvGroup = itemView.findViewById(R.id.card_view);
         }
 
         public void bind(final ArrowGroupModel item, final OnItemClickListener listener) {
@@ -78,15 +82,31 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             tvArrowScore2.setText(String.valueOf(item.getArrowPoint2().score));
             tvArrowScore3.setTextColor(item.getGroupTextColor());
             tvArrowScore3.setText(String.valueOf(item.getArrowPoint3().score));
-            tvRating.setTextColor(item.getGroupColor());
+
+            int grpRatingColor = item.getGroupColor();
+            if (grpRatingColor == Color.WHITE) grpRatingColor = Color.GREEN;
+            tvRating.setTextColor(grpRatingColor);
             tvRating.setText(String.valueOf(item.getGroupRating()));
 
+            if (!item.getShowGroup()) {
+                cvGroup.setBackgroundColor(Color.WHITE);
+            }
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!item.getShowGroup()) item.setShowGroup(true);
-                    else item.setShowGroup(false);
+
+                    int grpRatingColor = item.getGroupColor();
+
+                    if (!item.getShowGroup()) {
+                        item.setShowGroup(true);
+                        if (grpRatingColor == Color.WHITE) grpRatingColor = Color.GREEN;
+                        cvGroup.setBackgroundColor(grpRatingColor);
+                    }
+                    else {
+                        item.setShowGroup(false);
+                        cvGroup.setBackgroundColor(Color.WHITE);
+                    }
                     listener.onItemClick(item);
                 }
             });
