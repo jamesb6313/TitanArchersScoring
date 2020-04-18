@@ -131,6 +131,11 @@ public class TargetView extends View {
     public void resetGroupDrawingStatus() {
         this.mGroupMode = FALSE;
 
+        if (mGroupList != null && mGroupList.size() > 0) {
+            for (ArrowGroupModel grp : mGroupList) {
+                grp.setShowGroup(false);
+            }
+        }
         invalidate();
     }
 
@@ -153,37 +158,38 @@ public class TargetView extends View {
             }
         }
 
-        mBitmapPaint.setColor(currentColor);
-        canvas.drawCircle(mX , mY - TOUCH_OFFSET, mArrowScaledRadius, mBitmapPaint);
+        if (mGroupMode == FALSE) {
+            mBitmapPaint.setColor(currentColor);
+            canvas.drawCircle(mX, mY - TOUCH_OFFSET, mArrowScaledRadius, mBitmapPaint);
 
-        if (mX != 0 && mY != 0) {
-            mBitmapPaint.setStrokeWidth(2);
-            canvas.drawLine(centerX, centerY, mX, mY - TOUCH_OFFSET, mBitmapPaint);
+            if (mX != 0 && mY != 0) {
+                mBitmapPaint.setStrokeWidth(2);
+                canvas.drawLine(centerX, centerY, mX, mY - TOUCH_OFFSET, mBitmapPaint);
 
 
-            int score;
-            score = getScore(mX, mY - TOUCH_OFFSET);
+                int score;
+                score = getScore(mX, mY - TOUCH_OFFSET);
 
-            //Show score on canvas as it changes
-            String scoreStr;
-            if (score == 0) scoreStr = "M";
-            else
-            if (score == 11) scoreStr = "X";
-            else scoreStr = String.valueOf(score);
+                //Show score on canvas as it changes
+                String scoreStr;
+                if (score == 0) scoreStr = "M";
+                else if (score == 11) scoreStr = "X";
+                else scoreStr = String.valueOf(score);
 
-            canvas.drawText(scoreStr,20, getHeight() - 50,mBitmapPaint);
+                canvas.drawText(scoreStr, 20, getHeight() - 50, mBitmapPaint);
 
-            mBitmapPaint.setStrokeWidth(mStrokeWidth);
+                mBitmapPaint.setStrokeWidth(mStrokeWidth);
+            }
+
+            //get ArrowPoint Group color - sets currentColor in groups of three
+            //do after drawCircle - last of group gets next color temporarily
+            getArrowGroupColor();
         }
 
-        //get ArrowPoint Group color - sets currentColor in groups of three
-        //do after drawCircle - last of group gets next color temporarily
-        getArrowGroupColor();
 
-        //if (drawingStatus != NOT_SET) {
         if (mGroupMode == TRUE && mGroupList != null && mGroupList.size() > 0) {
             for (ArrowGroupModel grp : mGroupList) {
-                //this.drawingStatus = drawingStatus;
+
                 if (grp.getShowGroup()) {
                     mGroupCenterX = grp.getGroupCenterX();
                     mGroupCenterY = grp.getGroupCenterY();
@@ -193,7 +199,14 @@ public class TargetView extends View {
                     mBitmapPaint.setColor(mGroupColor);
                     mBitmapPaint.setStyle(Paint.Style.FILL);
                     mBitmapPaint.setAlpha(100);
-                    canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius * mScaleFactor, mBitmapPaint);
+                    //canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius * mScaleFactor, mBitmapPaint);
+                    canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius, mBitmapPaint);
+
+                    mBitmapPaint.setColor(Color.BLACK);
+                    mBitmapPaint.setStyle(Paint.Style.STROKE);
+                    mBitmapPaint.setAlpha(255);
+                    //canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius * mScaleFactor, mBitmapPaint);
+                    canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius, mBitmapPaint);
                 }
             }
 
@@ -210,7 +223,7 @@ public class TargetView extends View {
         float y = event.getY();
 
         //Only 30 arrows per round and if not in group mode
-        if (mModel.getListSize() >= 30  || drawingStatus == TRUE) {
+        if (mModel.getListSize() >= 30  || mGroupMode == TRUE) {
             return false;
         }
 
