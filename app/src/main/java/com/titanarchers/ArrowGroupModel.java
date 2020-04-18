@@ -7,6 +7,10 @@ public class ArrowGroupModel {
     private float groupRadius;
     private float groupCenterX;
     private float groupCenterY;
+    private int groupRating;
+    private int groupColor;
+    private boolean showGroup;
+    private int groupTextColor;
 
 
     public ArrowPoint getArrowPoint1() {
@@ -35,4 +39,16 @@ public class ArrowGroupModel {
 
     public float getGroupCenterY() { return groupCenterY; }
     public void setGroupCenterY(float groupCenterY) { this.groupCenterY = groupCenterY; }
+
+    public int getGroupRating() { return groupRating; }
+    public void setGroupRating(int groupRating) { this.groupRating = groupRating; }
+
+    public int getGroupColor() { return groupColor; }
+    public void setGroupColor(int groupColor) { this.groupColor = groupColor; }
+
+    public boolean getShowGroup() { return showGroup; }
+    public void setShowGroup(boolean showGroup) { this.showGroup =showGroup; }
+
+    public int getGroupTextColor() { return groupTextColor; }
+    public void setGroupTextColor(int groupTextColor) { this.groupTextColor = groupTextColor; }
 }

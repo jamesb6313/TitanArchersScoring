@@ -3,6 +3,7 @@ package com.titanarchers;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,8 +14,10 @@ import java.util.List;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     private List<ArrowGroupModel> groupList;
-    public CustomAdapter(List<ArrowGroupModel> groupList) {
+    private OnItemClickListener listener;
+    public CustomAdapter(List<ArrowGroupModel> groupList, OnItemClickListener listener) {
         this.groupList = groupList;
+        this.listener = listener;
     }
 
     @Override
@@ -29,10 +32,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        holder.tvArrowScore1.setText(String.valueOf(groupList.get(position).getArrowPoint1().score));
-        holder.tvArrowScore2.setText(String.valueOf(groupList.get(position).getArrowPoint2().score));
-        holder.tvArrowScore3.setText(String.valueOf(groupList.get(position).getArrowPoint3().score));
-
+        //holder.tvArrowScore1.setText(String.valueOf(groupList.get(position).getArrowPoint1().score));
+        //holder.tvArrowScore2.setText(String.valueOf(groupList.get(position).getArrowPoint2().score));
+        //holder.tvArrowScore3.setText(String.valueOf(groupList.get(position).getArrowPoint3().score));
+        holder.bind(groupList.get(position), listener);
     }
 
     @Override
@@ -56,23 +59,42 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvArrowScore1, tvArrowScore2, tvArrowScore3;
+        public TextView tvArrowScore1, tvArrowScore2, tvArrowScore3, tvRating;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             //itemView.setOnClickListener(this); //add click for row to enable_disable row
-
-
             tvArrowScore1 = itemView.findViewById(R.id.arrowScore1);
             tvArrowScore2 = itemView.findViewById(R.id.arrowScore2);
             tvArrowScore3 = itemView.findViewById(R.id.arrowScore3);
+            tvRating = itemView.findViewById(R.id.rating);
         }
 
-        //onClick Listener for view
-        //@Override
-        //public void onClick(View v) {
+        public void bind(final ArrowGroupModel item, final OnItemClickListener listener) {
+            tvArrowScore1.setTextColor(item.getGroupTextColor());
+            tvArrowScore1.setText(String.valueOf(item.getArrowPoint1().score));
+            tvArrowScore2.setTextColor(item.getGroupTextColor());
+            tvArrowScore2.setText(String.valueOf(item.getArrowPoint2().score));
+            tvArrowScore3.setTextColor(item.getGroupTextColor());
+            tvArrowScore3.setText(String.valueOf(item.getArrowPoint3().score));
+            tvRating.setTextColor(item.getGroupColor());
+            tvRating.setText(String.valueOf(item.getGroupRating()));
 
-        //}
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!item.getShowGroup()) item.setShowGroup(true);
+                    else item.setShowGroup(false);
+                    listener.onItemClick(item);
+                }
+            });
+
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ArrowGroupModel arrowGroup);
     }
 }

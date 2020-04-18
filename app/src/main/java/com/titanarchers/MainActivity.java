@@ -88,10 +88,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
+        FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (!fragScoreCard.isHidden() || !fragGroups.isHidden()) {
             if (!fragScoreCard.isHidden()) ft.hide(fragScoreCard);
-            else if (!fragGroups.isHidden()) ft.hide(fragGroups);
+            else if (!fragGroups.isHidden()) {
+                ft.hide(fragGroups);
+                Fragment targetCanvasFrag = fm.findFragmentById(R.id.fragmentTarget);
+                TargetView targetCanvasView = targetCanvasFrag.getView().findViewById(R.id.targetView);
+
+                targetCanvasView.resetGroupDrawingStatus();
+            }
         } else {
             super.onBackPressed();
         }

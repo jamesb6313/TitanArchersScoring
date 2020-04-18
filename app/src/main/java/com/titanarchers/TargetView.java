@@ -30,16 +30,26 @@ public class TargetView extends View {
     private int currentColor = DEFAULT_COLOR;
     private int mStrokeWidth;
     private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-    private float mScaleFactor;
+    public float mScaleFactor;
     private float mArrowScaledRadius;
 
     private float centerX;
     private float centerY;
     private float mX, mY;
-    private final float[] mRadii = new float[11];
+    public final float[] mRadii = new float[11];
 
     private final ArrowPointViewModel mModel;
     private List<ArrowPoint> mArrowPointList = new ArrayList<>();
+
+    public static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
+    private int drawingStatus;
+    private int mGroupMode;
+    private float mGroupCenterX;
+    private float mGroupCenterY;
+    private float mGroupRadius;
+    private int mGroupColor;
+    private List<ArrowGroupModel> mGroupList;
+
 
     private  OnCoordinateUpdate mCoordinatesListener;
 
@@ -87,7 +97,8 @@ public class TargetView extends View {
         centerY = mCanvas.getHeight() / 2;
 
         currentColor = DEFAULT_COLOR;
-
+        //drawingStatus = NOT_SET;
+        mGroupMode = FALSE;
         fillRadii();
     }
 
@@ -104,10 +115,33 @@ public class TargetView extends View {
         invalidate();
     }
 
+    public void setGroupDrawingStatus(int groupMode, List<ArrowGroupModel> grpList) {
+       mGroupList = grpList;
+
+       //mGroupCenterX = group.getGroupCenterX();
+       //mGroupCenterY = group.getGroupCenterY();
+       //mGroupRadius = group.getGroupRadius();
+       //mGroupColor = group.getGroupColor();
+       //this.drawingStatus = drawingStatus;
+        this.mGroupMode = groupMode;
+
+       invalidate();
+    }
+
+    public void resetGroupDrawingStatus() {
+        this.mGroupMode = FALSE;
+
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
+
+        mBitmapPaint.setStyle(Paint.Style.STROKE);
+        mBitmapPaint.setAlpha(255);
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+
 
         mArrowPointList = mModel.getArrowPoints().getValue();
         if (mArrowPointList != null) {
@@ -146,6 +180,25 @@ public class TargetView extends View {
         //do after drawCircle - last of group gets next color temporarily
         getArrowGroupColor();
 
+        //if (drawingStatus != NOT_SET) {
+        if (mGroupMode == TRUE && mGroupList != null && mGroupList.size() > 0) {
+            for (ArrowGroupModel grp : mGroupList) {
+                //this.drawingStatus = drawingStatus;
+                if (grp.getShowGroup()) {
+                    mGroupCenterX = grp.getGroupCenterX();
+                    mGroupCenterY = grp.getGroupCenterY();
+                    mGroupRadius = grp.getGroupRadius();
+                    mGroupColor = grp.getGroupColor();
+
+                    mBitmapPaint.setColor(mGroupColor);
+                    mBitmapPaint.setStyle(Paint.Style.FILL);
+                    mBitmapPaint.setAlpha(100);
+                    canvas.drawCircle(mGroupCenterX , mGroupCenterY, mGroupRadius * mScaleFactor, mBitmapPaint);
+                }
+            }
+
+        }
+
         canvas.restore();
     }
 
@@ -156,8 +209,8 @@ public class TargetView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        //Only 30 arrows per round
-        if (mModel.getListSize() >= 30) {
+        //Only 30 arrows per round and if not in group mode
+        if (mModel.getListSize() >= 30  || drawingStatus == TRUE) {
             return false;
         }
 
@@ -274,38 +327,46 @@ public class TargetView extends View {
             numGroups = arrowCount / 3;
         }
 
-        switch (numGroups) {
+        currentColor = getColorValue(numGroups);
+    }
+
+    public int getColorValue(int grpNum) {
+        int clrValue;
+
+        switch (grpNum) {
             case 0:
-                currentColor = Color.parseColor("#32C12C");    //Green
+                clrValue = Color.parseColor("#32C12C");    //Green
                 break;
             case 1:
-                currentColor = Color.parseColor("#009888");    //Teal
+                clrValue = Color.parseColor("#009888");    //Teal
                 break;
             case 2:
-                currentColor = Color.parseColor("#7F4FC9");    //Purple
+                clrValue = Color.parseColor("#7F4FC9");    //Purple
                 break;
             case 3:
-                currentColor = Color.parseColor("#9E9E9E");    //Grey
+                clrValue = Color.parseColor("#9E9E9E");    //Grey
                 break;
             case 4:
-                currentColor = Color.parseColor("#CDE000");    //Lime
+                clrValue = Color.parseColor("#CDE000");    //Lime
                 break;
             case 5:
-                currentColor = Color.parseColor("#FF9A00");    //Orange
+                clrValue = Color.parseColor("#FF9A00");    //Orange
                 break;
             case 6:
-                currentColor = Color.parseColor("#FF5500");    //Deep Orange
+                clrValue = Color.parseColor("#FF5500");    //Deep Orange
                 break;
             case 7:
-                currentColor = Color.parseColor("#7C5547");    //Brown
+                clrValue = Color.parseColor("#7C5547");    //Brown
                 break;
             case 8:
-                currentColor = Color.parseColor("#50342C");    //Deep Brown
+                clrValue = Color.parseColor("#50342C");    //Deep Brown
                 break;
             default:
-                currentColor = Color.parseColor("#32C12C");    //Green
+                clrValue = Color.parseColor("#32C12C");    //Green
                 break;
         }
+
+        return clrValue;
     }
 
 }
