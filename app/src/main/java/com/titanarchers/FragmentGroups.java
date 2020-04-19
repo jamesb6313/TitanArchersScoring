@@ -2,11 +2,9 @@ package com.titanarchers;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,17 +27,11 @@ import static java.lang.Math.sin;
 public class FragmentGroups  extends Fragment {
 
     private List<ArrowGroupModel> groupList = new ArrayList<>();
-    private int NumberOfGroups = 10;
     private ArrowPointViewModel arrowModel;
-    private List<ArrowPoint> apList;
-
-    private RecyclerView recyclerView;
     private CustomAdapter mAdapter;
-    public static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
-    public int drawGroup = FALSE;
-    public int groupMode = FALSE;
-
-    TargetView targetCanvasView;
+    private static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
+    private int groupMode = FALSE;
+    private TargetView targetCanvasView;
     private static final int DEFAULT_COLOR = Color.GREEN;
     private int ratingColor = DEFAULT_COLOR;
 
@@ -54,6 +46,7 @@ public class FragmentGroups  extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        List<ArrowPoint> apList;
 
         if (!hidden) {
             apList = arrowModel.getArrowPoints().getValue();
@@ -76,7 +69,7 @@ public class FragmentGroups  extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_groups, container);
-
+        RecyclerView recyclerView;
 
         // Get Fragment belonged Activity
         //final FragmentActivity fragmentBelongActivity = getActivity();
@@ -115,10 +108,10 @@ public class FragmentGroups  extends Fragment {
     }
 
     private void getModel(List<ArrowPoint> arrowList){
-        groupList.clear();
-
+        int NumberOfGroups = 10;
         int grpRating;
 
+        groupList.clear();
         for(int i = 0; i < NumberOfGroups; i++) {
 
             int idx = i * 3;
@@ -144,6 +137,9 @@ public class FragmentGroups  extends Fragment {
                     grpRating = calcGroupRating(adjRadius);
                     groupModel.setGroupRating(grpRating);
 
+                    int grpPercent = calcGroupPercent(grpRating);
+                    groupModel.setGroupPercent(grpPercent);
+
                     calcRatingColor(grpRating);
                     groupModel.setGroupColor(ratingColor);
                     groupModel.setShowGroup(false);
@@ -165,18 +161,33 @@ public class FragmentGroups  extends Fragment {
         private ArrowPoint pt;
         private int dist;
 
-        public Test(int i, ArrowPoint p, int d) {
+        private Test(int i, ArrowPoint p, int d) {
             idx = i;
             pt = p;
             dist = d;
         }
 
         public int getIdx() { return idx; }
-        public ArrowPoint getPt() { return pt; }
-        public int getDist() { return dist; }
+        //public ArrowPoint getPt() { return pt; }
+        private int getDist() { return dist; }
     }
     private List<Test> testArray = new ArrayList<>();
     private float adjRadius, adjMX, adjMY;
+
+    // Group percent = group size (rating - 0 to 10) * distance (as score) from target center to group center (0 to 10)
+    private int calcGroupPercent(int grpSize) {
+        //float targetCenterX = targetCanvasView.centerX;
+        //float targetCenterY = targetCanvasView.centerY;
+
+        //distanceToGroup = (int) dist(targetCenterX, targetCenterY, adjMX, adjMY);
+
+        int groupCenterScore = targetCanvasView.getScore(adjMX, adjMY);
+        if (groupCenterScore == 11) groupCenterScore = 10;
+
+        int percentValue = (grpSize * groupCenterScore) >= 100 ? 99 : (grpSize * groupCenterScore);
+        return percentValue;
+
+    }
 
     private int calcGroupRating(float radius) {
         int rating = 11;
@@ -184,7 +195,7 @@ public class FragmentGroups  extends Fragment {
 
         for (int i = 0; i < targetCanvasView.mRadii.length; i++) {
             float targetRadius = targetCanvasView.mRadii[i];
-            float grpRadius = radius * targetCanvasView.mScaleFactor;
+            float grpRadius = radius;   // * targetCanvasView.mScaleFactor;
 
             if (grpRadius < targetRadius) {
                 found = true;

@@ -33,21 +33,15 @@ public class TargetView extends View {
     public float mScaleFactor;
     private float mArrowScaledRadius;
 
-    private float centerX;
-    private float centerY;
+    public float centerX;
+    public float centerY;
     private float mX, mY;
     public final float[] mRadii = new float[11];
 
     private final ArrowPointViewModel mModel;
     private List<ArrowPoint> mArrowPointList = new ArrayList<>();
-
     public static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
-    private int drawingStatus;
     private int mGroupMode;
-    private float mGroupCenterX;
-    private float mGroupCenterY;
-    private float mGroupRadius;
-    private int mGroupColor;
     private List<ArrowGroupModel> mGroupList;
 
 
@@ -97,7 +91,6 @@ public class TargetView extends View {
         centerY = mCanvas.getHeight() / 2;
 
         currentColor = DEFAULT_COLOR;
-        //drawingStatus = NOT_SET;
         mGroupMode = FALSE;
         fillRadii();
     }
@@ -188,6 +181,11 @@ public class TargetView extends View {
 
 
         if (mGroupMode == TRUE && mGroupList != null && mGroupList.size() > 0) {
+            float mGroupCenterX;
+            float mGroupCenterY;
+            float mGroupRadius;
+            int mGroupColor;
+
             for (ArrowGroupModel grp : mGroupList) {
 
                 if (grp.getShowGroup()) {
@@ -292,7 +290,7 @@ public class TargetView extends View {
     }
 
     //Calculate using first point on circumference of arrow that crosses
-    private int getScore(float posX, float posY) {
+    public int getScore(float posX, float posY) {
         int result = 0;
         boolean found = false;
 

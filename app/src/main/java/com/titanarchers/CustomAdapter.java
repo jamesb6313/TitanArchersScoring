@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,7 +51,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             modelSize = 0;
             // warn user
             // clear mEditor
-            //FIXME sometimes have left over mpref and need yo delete so using this for those occasions
+            //FIXME sometimes have left over mpref and need to delete so using this for those occasions
             //get null pointer error in CustomAdapter - getItemCount()
             //mEditor.clear().commit();
         }
@@ -61,17 +60,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvArrowScore1, tvArrowScore2, tvArrowScore3, tvRating;
-        public CardView cvGroup;
+        TextView tvArrowScore1, tvArrowScore2, tvArrowScore3, tvRating, tvPercent;
+        CardView cvGroup;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            //itemView.setOnClickListener(this); //add click for row to enable_disable row
             tvArrowScore1 = itemView.findViewById(R.id.arrowScore1);
             tvArrowScore2 = itemView.findViewById(R.id.arrowScore2);
             tvArrowScore3 = itemView.findViewById(R.id.arrowScore3);
             tvRating = itemView.findViewById(R.id.rating);
+            tvPercent = itemView.findViewById(R.id.percent);
             cvGroup = itemView.findViewById(R.id.card_view);
         }
 
@@ -87,6 +86,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             if (grpRatingColor == Color.WHITE) grpRatingColor = Color.GREEN;
             tvRating.setTextColor(grpRatingColor);
             tvRating.setText(String.valueOf(item.getGroupRating()));
+
+            tvPercent.setText(String.valueOf(item.getGroupPercent()));
 
             if (!item.getShowGroup()) {
                 cvGroup.setBackgroundColor(Color.WHITE);

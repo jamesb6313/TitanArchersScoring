@@ -8,6 +8,7 @@ public class ArrowGroupModel {
     private float groupCenterX;
     private float groupCenterY;
     private int groupRating;
+    private int groupPercent;
     private int groupColor;
     private boolean showGroup;
     private int groupTextColor;
@@ -51,4 +52,7 @@ public class ArrowGroupModel {
 
     public int getGroupTextColor() { return groupTextColor; }
     public void setGroupTextColor(int groupTextColor) { this.groupTextColor = groupTextColor; }
+
+    public int getGroupPercent() { return groupPercent; }
+    public void setGroupPercent(int groupPercent) { this.groupPercent = groupPercent; }
 }
