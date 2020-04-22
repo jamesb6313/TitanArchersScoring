@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rvLayout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:orientation="horizontal"
-    android:paddingLeft="5dp"
+    android:paddingStart="5dp"
     android:paddingTop="1dp"
-    android:paddingRight="5dp"
+    android:paddingEnd="25dp"
     android:paddingBottom="1dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="25dp">
 
 
         <LinearLayout
@@ -30,7 +32,7 @@
                 android:background="@drawable/score_border"
                 android:gravity="center"
                 android:text="@string/blankScore"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/arrowScore2"
@@ -39,7 +41,7 @@
                 android:background="@drawable/score_border"
                 android:gravity="center"
                 android:text="@string/blankScore"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/arrowScore3"
@@ -48,7 +50,7 @@
                 android:background="@drawable/score_border"
                 android:gravity="center"
                 android:text="@string/blankScore"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/rating"
@@ -58,7 +60,7 @@
                 android:background="@drawable/score_border"
                 android:gravity="center"
                 android:text="@string/blankScore"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/percent"
@@ -68,7 +70,7 @@
                 android:background="@drawable/score_border"
                 android:gravity="center"
                 android:text="@string/blankScore"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
 

@@ -26,6 +26,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //TODO: android.preference depricated need androidx
+    implementation 'androidx.preference:preference:1.1.1'
     testImplementation 'junit:junit:4.12'
 
     //added for lifecycle - see TargetView.java

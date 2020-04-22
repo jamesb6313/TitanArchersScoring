@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,7 +29,7 @@ import static java.lang.Math.sin;
 
 public class FragmentGroups  extends Fragment {
 
-    private List<ArrowGroupModel> groupList = new ArrayList<>();
+    public List<ArrowGroupModel> groupList = new ArrayList<>();
     private ArrowPointViewModel arrowModel;
     private CustomAdapter mAdapter;
     private static final int FALSE = 0, TRUE = 1, NOT_SET = 2;
@@ -60,6 +63,9 @@ public class FragmentGroups  extends Fragment {
                 Fragment targetCanvasFrag = fm.findFragmentById(R.id.fragmentTarget);
                 targetCanvasView = targetCanvasFrag.getView().findViewById(R.id.targetView);
                 getModel(apList);
+
+                FragmentGroupCard fragmentGroupCard = (FragmentGroupCard) fm.findFragmentById(R.id.fragmentGroupCard);
+                fragmentGroupCard.setGroups(groupList);
             }
         }
     }
@@ -70,14 +76,7 @@ public class FragmentGroups  extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View retView = inflater.inflate(R.layout.fragment_groups, container);
         RecyclerView recyclerView;
-
-        // Get Fragment belonged Activity
-        //final FragmentActivity fragmentBelongActivity = getActivity();
-
-        // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
-        //final FragmentManager fm = fragmentBelongActivity.getSupportFragmentManager();
-
-
+        Button btn_share;
 
         if (retView != null) {
             recyclerView = retView.findViewById(R.id.recycler);
@@ -101,6 +100,33 @@ public class FragmentGroups  extends Fragment {
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
 
+            // Get ref to TargetView - Get Fragment belonged Activity
+            final FragmentActivity fragmentBelongActivity = getActivity();
+            final FragmentManager fm = fragmentBelongActivity.getSupportFragmentManager();
+
+            btn_share = retView.findViewById(R.id.btn_share2);
+            btn_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (groupList != null && groupList.size() > 0) {
+
+
+                        // Get groupCard Fragment object from MainActivity()
+                        Fragment groupCard = fm.findFragmentById(R.id.fragmentGroupCard);
+                        FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
+
+                        if (groupCard == null) throw new AssertionError();
+                        if (groupCard.isHidden()) {
+                            ft.show(groupCard);
+                        } else {
+                            ft.hide(groupCard);
+                        }
+                        ft.commit();
+                    } else {
+                        Toast.makeText(fragmentBelongActivity, "No groups to show.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
             //if (apList != null) getModel(apList);
         }
         return retView;

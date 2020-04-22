@@ -30,13 +30,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentScoreCard extends Fragment {
+public class FragmentGroupCard extends Fragment {
 
-    private ArrowPointViewModel model;
+    private ArrowPointViewModel arrowModel;
+    private List<ArrowGroupModel> mGroupList;
 
-    private WebView wv_ScoreCard;
+    public Fragment fragGroups;     //fragmentGroups
+    private WebView wv_GroupCard;
     private View v_target;
 
 
@@ -44,7 +47,7 @@ public class FragmentScoreCard extends Fragment {
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
 
-        model = ViewModelProviders.of(this.getActivity()).get(ArrowPointViewModel.class);
+        arrowModel = ViewModelProviders.of(this.getActivity()).get(ArrowPointViewModel.class);
     }
 
     @Override
@@ -52,7 +55,7 @@ public class FragmentScoreCard extends Fragment {
         super.onHiddenChanged(hidden);
 
         if (!hidden) {
-            if (model != null) {
+            if (arrowModel != null) {
                 Uri baseUrl;
 
                 File newFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "newTargetImage.png");
@@ -62,7 +65,7 @@ public class FragmentScoreCard extends Fragment {
                 baseUrl = takeScreenShot(v_target, newFile);    // have v_target save as file
 
                 String html = createHTMLTable("newTargetImage.png");
-                wv_ScoreCard.loadDataWithBaseURL(baseUrl.toString(), html, "text/html", "UTF-8", null);
+                wv_GroupCard.loadDataWithBaseURL(baseUrl.toString(), html, "text/html", "UTF-8", null);
             }
         }
     }
@@ -71,12 +74,12 @@ public class FragmentScoreCard extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View retView = inflater.inflate(R.layout.fragment_scorecard, container);
+        View retView = inflater.inflate(R.layout.fragment_groupcard, container);
         Button btn_share;
 
         if (retView != null) {
             // Get ref to webView
-            wv_ScoreCard = retView.findViewById(R.id.wv_ScoreCard);
+            wv_GroupCard = retView.findViewById(R.id.wv_GroupCard);
 
             // Get ref to TargetView - Get Fragment belonged Activity
             final FragmentActivity fragmentBelongActivity = getActivity();
@@ -86,17 +89,25 @@ public class FragmentScoreCard extends Fragment {
             Fragment targetImage = fragmentManager.findFragmentById(R.id.fragmentTarget);
             v_target = targetImage.getView();
 
+            //fragGroups = fragmentManager.findFragmentById(R.id.fragmentGroups);
+            //List<ArrowGroupModel> gList = fragGroups
+
+
             btn_share = retView.findViewById(R.id.btn_share);
             btn_share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setBtn_share(wv_ScoreCard);
+                    setBtn_share(wv_GroupCard);
                 }
             });
 
         }
         return retView;
 
+    }
+
+    public void setGroups(List<ArrowGroupModel> grpList) {
+        mGroupList = grpList;
     }
 
     //SEE:https://guides.codepath.com/android/Sharing-Content-with-Intents (using file Provider - create res/xml/fileprovider.xml , change AndroidManifest.xml)
@@ -153,7 +164,7 @@ public class FragmentScoreCard extends Fragment {
     private void setBtn_share(View wv_ScoreCard) {
         String fn;
         String timeStr = DateFormat.format("MM_dd_yyyy_hh_mm", System.currentTimeMillis()).toString();
-        fn ="TitanTargetImage_"+timeStr +".png";
+        fn ="TitanTargetGrouping_"+timeStr +".png";
 
         Uri pictureUri;
         File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), fn);
@@ -189,9 +200,8 @@ public class FragmentScoreCard extends Fragment {
     }
 
     private String createHTMLTable(String imgFileName) {
-
         String timeStr = DateFormat.format("MMM dd, yyyy hh:mm a", System.currentTimeMillis()).toString();
-        List<ArrowPoint> apList = model.getArrowPoints().getValue();
+        List<ArrowPoint> apList = arrowModel.getArrowPoints().getValue();
 
         final StringBuilder sb_HTML = new StringBuilder();
         String imageElem = "<img src=" + "'" + imgFileName +"' style='width:100%'>";
@@ -200,28 +210,45 @@ public class FragmentScoreCard extends Fragment {
                 "</style></head><body>";
         html = html + imageElem +
                 //"<img src='archery_target.9.png'  style='width:100%'>" +
-                "<br> <table border='1' bordercolor='green' style='width:100%;height:10%'> <tr><b><th>A1</th><th>A2</th><th>A3</th><th>A4</th><th>A5</th><th>A6</th><th>Total</th></b></tr>";
+                "<br> <table border='1' bordercolor='green' style='width:100%;height:10%'>" +
+                "<tr><b><th>A1</th><th>A2</th><th>A3</th>" +
+                "<th>Group Size</th><th>Group Rating</th>" +        //group info
+                "<th>A4</th><th>A5</th><th>A6</th>" +
+                "<th>Group Size</th><th>Group Rating</th>" +        //group info
+                "<th>Total</th></b></tr>";
         sb_HTML.append(html);
         sb_HTML.append("<tr>");
 
         int subtotal = 0;
         int total = 0;
         int cntr = 0;
-        ArrowPoint ap;
+        ArrowGroupModel aGroup;
 
-        for (int i = 0; i < apList.size(); i++) {
+        for (int i = 0; i < mGroupList.size(); i++) {
             cntr++;
-            ap = apList.get(i);
-            subtotal += (ap.score == 11) ? 10 : ap.score;
-            total += (ap.score == 11) ? 10 : ap.score;
+            aGroup = mGroupList.get(i);
+
+            subtotal += (aGroup.getArrowPoint1().score == 11) ? 10 : aGroup.getArrowPoint1().score;
+            total += (aGroup.getArrowPoint1().score == 11) ? 10 : aGroup.getArrowPoint1().score;
+            subtotal += (aGroup.getArrowPoint2().score == 11) ? 10 : aGroup.getArrowPoint2().score;
+            total += (aGroup.getArrowPoint2().score == 11) ? 10 : aGroup.getArrowPoint2().score;
+            subtotal += (aGroup.getArrowPoint3().score == 11) ? 10 : aGroup.getArrowPoint3().score;
+            total += (aGroup.getArrowPoint3().score == 11) ? 10 : aGroup.getArrowPoint3().score;
 
             String tempStr;
-            String arrowColor = String.format("#%06x", ap.color & 0xffffff);
+            String arrowColor = String.format("#%06x", aGroup.getArrowPoint1().color & 0xffffff);
 
-            tempStr = "<td style='color:" + arrowColor + "'>" + apList.get(i).score + "</td>";
+            tempStr = "<td style='color:" + arrowColor + "'>" + aGroup.getArrowPoint1().score + "</td>" +
+                    "<td style='color:" + arrowColor + "'>" + aGroup.getArrowPoint2().score + "</td>" +
+                    "<td style='color:" + arrowColor + "'>" + aGroup.getArrowPoint3().score + "</td>";
             sb_HTML.append(tempStr);
 
-            if ((i + 1) % 6 == 0) {
+            String grpColor = String.format("#%06x", aGroup.getGroupColor() & 0xffffff);
+            tempStr = "<td style='color:" + grpColor + "'>" + aGroup.getGroupRating() + "</td>" +
+                    "<td style='color:" + Color.BLACK + "'>" + aGroup.getGroupPercent() + "%</td>";
+            sb_HTML.append(tempStr);
+
+            if ((i + 1) % 2 == 0) {
                 tempStr = "<td style='color:red'>" + subtotal + "</td>";
                 sb_HTML.append(tempStr);
                 sb_HTML.append("</tr>");
@@ -231,15 +258,15 @@ public class FragmentScoreCard extends Fragment {
         }
 
         //Complete scorecard if not finished
-        for (int i = cntr; i < 30; i++) {
+        for (int i = cntr; i < 10; i++) {
             cntr++;
-            sb_HTML.append("<td>00</td>");
+            sb_HTML.append("<td>00</td><td>00</td><td>00</td><td>00</td><td>00</td>");
 
-            if ((i + 1) % 6 == 0) {
+            if ((i + 1) % 2 == 0) {
                 sb_HTML.append("<td>00</td></tr>");
             }
         }
-        html = "<tr> <td style='text-align:right' colspan='6'>Total</td><td>"+total+"</td></tr>";
+        html = "<tr> <td style='text-align:right' colspan='10'>Total</td><td>"+total+"</td></tr>";
         sb_HTML.append(html);
         html = "</table><h3> Date: " + timeStr + "</h3>";
         sb_HTML.append(html);
