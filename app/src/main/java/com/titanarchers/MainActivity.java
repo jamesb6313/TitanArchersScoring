@@ -7,12 +7,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Fragment fragScoreCard;  //fragmentScoreCard
     public Fragment fragGroups;     //fragmentGroups
+    public Fragment fragGroupCard;  //fragmentGroupCard
 
     public int defaultDistance = 10;
     public String defaultName = "YourName";
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         fragScoreCard = fm.findFragmentById(R.id.fragmentScoreCard);
         fragGroups = fm.findFragmentById(R.id.fragmentGroups);
+        fragGroupCard = fm.findFragmentById(R.id.fragmentGroupCard);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(fragScoreCard);
         ft.hide(fragGroups);
+        ft.hide(fragGroupCard);
         ft.commit();
 
         if (loadSavedPreferences()) {
@@ -90,8 +93,10 @@ public class MainActivity extends AppCompatActivity {
     {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (!fragScoreCard.isHidden() || !fragGroups.isHidden()) {
+        if (!fragScoreCard.isHidden() || !fragGroups.isHidden() || !fragGroupCard.isHidden()) {
+
             if (!fragScoreCard.isHidden()) ft.hide(fragScoreCard);
+            if (!fragGroupCard.isHidden()) ft.hide(fragGroupCard);
             else if (!fragGroups.isHidden()) {
                 ft.hide(fragGroups);
                 Fragment targetCanvasFrag = fm.findFragmentById(R.id.fragmentTarget);
@@ -99,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                 targetCanvasView.resetGroupDrawingStatus();
             }
+
         } else {
             super.onBackPressed();
         }
@@ -129,15 +135,15 @@ public class MainActivity extends AppCompatActivity {
                     // Do not use fragmentBelongActivity.getFragmentManager() method which is not compatible with older android os version. .
                     final FragmentManager fragmentManager = fragmentBelongActivity.getSupportFragmentManager();
 
-                    Fragment groups = fragmentManager.findFragmentById(R.id.fragmentGroups);  // Get scorecard Fragment object.
+                    fragGroups = fragmentManager.findFragmentById(R.id.fragmentGroups);  // Get scorecard Fragment object.
 
                     FragmentTransaction ft = fragmentBelongActivity.getSupportFragmentManager().beginTransaction();
 
-                    if (groups.isHidden()) {
-                        ft.show(groups);
+                    if (fragGroups.isHidden()) {
+                        ft.show(fragGroups);
                         //windowsButton.setText("Hide Card");
                     } else {
-                        ft.hide(groups);
+                        ft.hide(fragGroups);
                         //windowsButton.setText("Show Card");
                     }
                     ft.commit();
