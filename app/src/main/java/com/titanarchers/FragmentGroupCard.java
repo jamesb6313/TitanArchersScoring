@@ -1,5 +1,6 @@
 package com.titanarchers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -41,6 +42,7 @@ public class FragmentGroupCard extends Fragment {
     public Fragment fragGroups;     //fragmentGroups
     private WebView wv_GroupCard;
     private View v_target;
+    private MainActivity mMainActivity;
 
 
     @Override
@@ -48,6 +50,7 @@ public class FragmentGroupCard extends Fragment {
         super.onActivityCreated(saveInstanceState);
 
         arrowModel = ViewModelProviders.of(this.getActivity()).get(ArrowPointViewModel.class);
+        mMainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -180,7 +183,7 @@ public class FragmentGroupCard extends Fragment {
 
     }
 
-
+/*
     public int defaultDistance;
     public String defaultName;
     public String defaultUnits;
@@ -198,6 +201,7 @@ public class FragmentGroupCard extends Fragment {
         }
         return result;
     }
+*/
 
     private String createHTMLTable(String imgFileName) {
         String timeStr = DateFormat.format("MMM dd, yyyy hh:mm a", System.currentTimeMillis()).toString();
@@ -243,7 +247,12 @@ public class FragmentGroupCard extends Fragment {
                     "<td style='color:" + arrowColor + "'>" + aGroup.getArrowPoint3().score + "</td>";
             sb_HTML.append(tempStr);
 
-            String grpColor = String.format("#%06x", aGroup.getGroupColor() & 0xffffff);
+            String grpColor;
+            if (aGroup.getGroupColor() == Color.WHITE)
+                grpColor = String.format("#%06x", Color.GREEN & 0xffffff);
+            else
+                grpColor = String.format("#%06x", aGroup.getGroupColor() & 0xffffff);
+
             tempStr = "<td style='color:" + grpColor + "'>" + aGroup.getGroupRating() + "</td>" +
                     "<td style='color:" + Color.BLACK + "'>" + aGroup.getGroupPercent() + "%</td>";
             sb_HTML.append(tempStr);
@@ -271,8 +280,9 @@ public class FragmentGroupCard extends Fragment {
         html = "</table><h3> Date: " + timeStr + "</h3>";
         sb_HTML.append(html);
 
-        if (loadSavedPreferences()) {
-            html = "<br><h3> Name: " + defaultName + " at " + defaultDistance + " " + defaultUnits + "</h3>";
+        mMainActivity.loadSavedPreferences();
+        if (mMainActivity.defaultName != null || !mMainActivity.defaultName.equalsIgnoreCase("YourName")) {
+            html = "<br><h3> Name: " + mMainActivity.defaultName + " at " + mMainActivity.defaultDistance + " " + mMainActivity.defaultUnits + "</h3>";
             sb_HTML.append(html);
         }
         html = sb_HTML.toString();

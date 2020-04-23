@@ -22,18 +22,23 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         Button btn_save, btn_cancel;
+        MainActivity mMainActivity;
 
-
-        et_Name = (EditText) findViewById(R.id.etName);
-        et_Distance = (EditText) findViewById(R.id.etDistance);
+        et_Name = findViewById(R.id.etName);
+        et_Distance = findViewById(R.id.etDistance);
         sp_units = findViewById(R.id.sp_Units);
 
         unit_Adapter = ArrayAdapter.createFromResource(getBaseContext(), R.array.units, android.R.layout.simple_spinner_item);
         unit_Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_units.setAdapter(unit_Adapter);
 
-        loadSavedPreferences();
+        mMainActivity = (MainActivity) getParent();
+        mMainActivity.loadSavedPreferences();
 
+        et_Distance.setText(String.valueOf(mMainActivity.defaultDistance));
+        et_Name.setText(mMainActivity.defaultName);
+        int selectionPosition= unit_Adapter.getPosition(mMainActivity.defaultUnits);
+        sp_units.setSelection(selectionPosition);
 
         btn_save = findViewById(R.id.btn_saveDetails);
         btn_save.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +47,7 @@ public class DetailsActivity extends AppCompatActivity {
                 int dist = Integer.parseInt(et_Distance.getText().toString());
                 String unit = sp_units.getSelectedItem().toString();
 
-                savePreferences("storedDistance", dist);
+                savePreferences(dist);
                 savePreferences("storedName", et_Name.getText().toString());
                 savePreferences("storedUnits", unit);
                 finish();
@@ -58,7 +63,7 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
     }
-
+/*
     private void loadSavedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
@@ -71,13 +76,13 @@ public class DetailsActivity extends AppCompatActivity {
         et_Name.setText(name);
         int selectionPosition= unit_Adapter.getPosition(distUnits);
         sp_units.setSelection(selectionPosition);
-    }
+    }*/
 
-    private void savePreferences(String key, int value) {
+    private void savePreferences(int value) {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key, value);
+        editor.putInt("storedDistance", value);
         editor.apply();
     }
 

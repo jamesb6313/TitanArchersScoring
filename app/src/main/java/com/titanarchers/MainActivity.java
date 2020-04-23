@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean loadSavedPreferences() {
+    public boolean loadSavedPreferences() {
         boolean result = false;
 
         SharedPreferences sharedPreferences = PreferenceManager

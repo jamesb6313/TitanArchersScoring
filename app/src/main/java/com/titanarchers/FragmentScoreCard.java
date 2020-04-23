@@ -38,13 +38,14 @@ public class FragmentScoreCard extends Fragment {
 
     private WebView wv_ScoreCard;
     private View v_target;
-
+    private MainActivity mMainActivity;
 
     @Override
     public void onActivityCreated(@Nullable Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
 
         model = ViewModelProviders.of(this.getActivity()).get(ArrowPointViewModel.class);
+        mMainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -115,7 +116,7 @@ public class FragmentScoreCard extends Fragment {
             fn.delete();
 
             newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
-            Log.e("newFile exist", "" + fn + ",Bitmap= " + newPictureUri.getPath());
+            Log.i("newFile exist", "FragmentScoreCard line 119 (takeScreenShot) fn = " + fn + ",Bitmap= " + newPictureUri.getPath());
         }
         try {
             OutputStream fout = getActivity().getContentResolver().openOutputStream(newPictureUri);
@@ -244,8 +245,9 @@ public class FragmentScoreCard extends Fragment {
         html = "</table><h3> Date: " + timeStr + "</h3>";
         sb_HTML.append(html);
 
-        if (loadSavedPreferences()) {
-            html = "<br><h3> Name: " + defaultName + " at " + defaultDistance + " " + defaultUnits + "</h3>";
+        mMainActivity.loadSavedPreferences();
+        if (mMainActivity.defaultName != null || !mMainActivity.defaultName.equalsIgnoreCase("YourName")) {
+            html = "<br><h3> Name: " + mMainActivity.defaultName + " at " + mMainActivity.defaultDistance + " " + mMainActivity.defaultUnits + "</h3>";
             sb_HTML.append(html);
         }
         html = sb_HTML.toString();
