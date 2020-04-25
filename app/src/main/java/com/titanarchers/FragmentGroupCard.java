@@ -117,10 +117,10 @@ public class FragmentGroupCard extends Fragment {
     private Uri takeScreenShot(View v1, File fn) {
         // create bitmap screen capture
         Bitmap bitmap;
-        v1.setDrawingCacheEnabled(true);
+        //v1.setDrawingCacheEnabled(true);//INFO note causes depreciation error - don't seem to need
 
         bitmap = loadBitmapFromView(v1, v1.getWidth(), v1.getHeight());
-        v1.setDrawingCacheEnabled(false);
+        //v1.setDrawingCacheEnabled(false);
 
         Uri newPictureUri;
         newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
@@ -129,7 +129,7 @@ public class FragmentGroupCard extends Fragment {
             fn.delete();
 
             newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);
-            Log.e("newFile exist", "" + fn + ",Bitmap= " + newPictureUri.getPath());
+            Log.e("newFile exist", "FragmentGroupCard line 132 (takeScreenShot) fn = " + fn + ",Bitmap= " + newPictureUri.getPath());
         }
         try {
             OutputStream fout = getActivity().getContentResolver().openOutputStream(newPictureUri);
@@ -216,9 +216,9 @@ public class FragmentGroupCard extends Fragment {
                 //"<img src='archery_target.9.png'  style='width:100%'>" +
                 "<br> <table border='1' bordercolor='green' style='width:100%;height:10%'>" +
                 "<tr><b><th>A1</th><th>A2</th><th>A3</th>" +
-                "<th>Group Size</th><th>Group Rating</th>" +        //group info
+                "<th>Group Size</th><th>Group Rating</th>" +        //group columns
                 "<th>A4</th><th>A5</th><th>A6</th>" +
-                "<th>Group Size</th><th>Group Rating</th>" +        //group info
+                "<th>Group Size</th><th>Group Rating</th>" +        //group columns
                 "<th>Total</th></b></tr>";
         sb_HTML.append(html);
         sb_HTML.append("<tr>");

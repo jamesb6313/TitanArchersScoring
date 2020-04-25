@@ -104,10 +104,11 @@ public class FragmentScoreCard extends Fragment {
     private Uri takeScreenShot(View v1, File fn) {
         // create bitmap screen capture
         Bitmap bitmap;
-        v1.setDrawingCacheEnabled(true);
+
+        //v1.setDrawingCacheEnabled(true); //INFO note causes depreciation error - don't seem to need
 
         bitmap = loadBitmapFromView(v1, v1.getWidth(), v1.getHeight());
-        v1.setDrawingCacheEnabled(false);
+        //v1.setDrawingCacheEnabled(false);
 
         Uri newPictureUri;
         newPictureUri = FileProvider.getUriForFile(getActivity(), "com.titanarchers", fn);

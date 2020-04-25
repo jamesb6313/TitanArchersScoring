@@ -1,6 +1,7 @@
 package com.titanarchers;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -66,6 +68,9 @@ public class FragmentGroups  extends Fragment {
 
                 FragmentGroupCard fragmentGroupCard = (FragmentGroupCard) fm.findFragmentById(R.id.fragmentGroupCard);
                 fragmentGroupCard.setGroups(groupList);
+
+                groupMode = TRUE;
+                targetCanvasView.setGroupDrawingStatus(groupMode, groupList);
             }
         }
     }
@@ -235,6 +240,7 @@ public class FragmentGroups  extends Fragment {
 
     }
 
+    //@RequiresApi(api = Build.VERSION_CODES.M)
     private void calcRatingColor(int grpRating) {
         switch (grpRating) {
             case 1: case 2:
@@ -249,8 +255,9 @@ public class FragmentGroups  extends Fragment {
             case 7: case 8:
                 ratingColor = Color.RED;
                 break;
-            case 9: case 10:
-                ratingColor = Color.YELLOW;
+            case 9: case 10: case 11:
+                //String tColor =
+                ratingColor = Build.VERSION.SDK_INT<23 ? getResources().getColor(R.color.colorYellowRating) : getResources().getColor(R.color.colorYellowRating,null);
                 break;
             default:
                 ratingColor = DEFAULT_COLOR;
